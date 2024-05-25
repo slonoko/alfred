@@ -29,7 +29,7 @@ else:
     storage_context = StorageContext.from_defaults(persist_dir=PERSIST_DIR)
     index = load_index_from_storage(storage_context)
 
-chat_engine = index.as_chat_engine(chat_mode=ChatMode.CONTEXT)
+chat_engine = index.as_chat_engine(chat_mode=ChatMode.CONDENSE_PLUS_CONTEXT)
 chat_engine.reset()
 command = input("Q: ")
 while(command != "exit"):
