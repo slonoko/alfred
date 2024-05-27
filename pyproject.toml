@@ -7,13 +7,16 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-llama-index = "^0.10.39"
 llama-index-core = "^0.10.39.post1"
 llama-index-readers-file = "^0.1.23"
 llama-index-llms-ollama = "^0.1.5"
 llama-index-embeddings-huggingface = "^0.2.0"
 transformers = "^4.41.1"
-llama-index-readers-google = "^0.2.5"
+google-api-python-client = "^2.130.0"
+google-auth-httplib2 = "^0.2.0"
+google-auth-oauthlib = "^1.2.0"
+beautifulsoup4 = "^4.12.3"
+llama-index = "^0.10.39"
 
 
 [build-system]
