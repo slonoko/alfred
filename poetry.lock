@@ -1259,6 +1259,21 @@ llama-index-core = ">=0.10.7,<0.11.0"
 llama-parse = ">=0.4.0,<0.5.0"
 
 [[package]]
+name = "llama-index-vector-stores-milvus"
+version = "0.1.22"
+description = "llama-index vector_stores milvus integration"
+optional = false
+python-versions = "<4.0,>=3.8.1"
+files = [
+    {file = "llama_index_vector_stores_milvus-0.1.22-py3-none-any.whl", hash = "sha256:018a6ad55828ff19997ddadeaa8e106c5420902993b6ab0f2ac17cb7bbbc276f"},
+    {file = "llama_index_vector_stores_milvus-0.1.22.tar.gz", hash = "sha256:65d7b1ee188a41bfa60683fc460ac685c7a6519341d7997e272ecb7ed599dc30"},
+]
+
+[package.dependencies]
+llama-index-core = ">=0.10.1,<0.11.0"
+pymilvus = ">=2.3.6,<3.0.0"
+
+[[package]]
 name = "llama-parse"
 version = "0.4.3"
 description = "Parse files into RAG-Optimized formats."
@@ -3571,4 +3586,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "530aeceb3c41470d957ae2c2dc78b1495810010be72ba61f6c20e86181640617"
+content-hash = "805866334f507dc363fd0302585e9f9ed490eb6cac28d99b88710fe9c1373e8b"
