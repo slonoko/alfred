@@ -12,12 +12,13 @@ logging.basicConfig(stream=sys.stdout, level=logging.ERROR)
 logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
 
 # bge-base embedding model
-Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-base-en-v1.5") # BAAI/bge-m3
+Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-m3")
+# Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-base-en-v1.5")
 
 # ollama
 Settings.llm = Ollama(model="llama3", request_timeout=360.0)
 
-gmail_reader = GmailReader(results_per_page=50, max_results=1000, use_iterative_parser=True)
+gmail_reader = GmailReader(results_per_page=100, max_results=100, use_iterative_parser=True)
 
 # check if storage already exists
 PERSIST_DIR = "./.storage"

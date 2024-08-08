@@ -17,6 +17,7 @@ google-auth-httplib2 = "^0.2.0"
 google-auth-oauthlib = "^1.2.0"
 beautifulsoup4 = "^4.12.3"
 llama-index = "^0.10.39"
+pymilvus = "^2.4.3"
 
 
 [build-system]

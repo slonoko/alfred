@@ -8,6 +8,8 @@ from typing import Any, List, Optional
 from llama_index.core.readers.base import BaseReader
 from llama_index.core.schema import Document
 from pydantic import BaseModel
+import logging
+from tqdm import tqdm
 
 SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"]
 
@@ -118,14 +120,17 @@ class GmailReader(BaseReader, BaseModel):
                     break
 
         result = []
-        try:
-            for message in messages:
+        logging.info(f"Total number of messages found {len(messages)}")
+        for i in tqdm(range(len(messages))):
+            message = messages[i]
+            try:
                 message_data = self.get_message_data(message)
                 if not message_data:
                     continue
                 result.append(message_data)
-        except Exception as e:
-            raise Exception("Can't get message data" + str(e))
+            except Exception as e:
+                #logging.error(msg=f"Can't get message data {str(e)}, for message with id {message['id']}")
+                continue
 
         return result
 
