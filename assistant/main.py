@@ -17,7 +17,7 @@ Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-m3") # https://
 # Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-base-en-v1.5")
 
 # ollama
-Settings.llm = Ollama(model="llama3", request_timeout=360.0)
+Settings.llm = Ollama(model="llama3.1", request_timeout=360.0) # https://github.com/ollama/ollama
 
 gmail_reader = GmailReader(results_per_page=100, max_results=100, use_iterative_parser=True)
 
