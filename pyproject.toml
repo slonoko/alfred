@@ -24,7 +24,8 @@ dependencies = [
 "pymilvus>=2.4.3",
 "llama-index-vector-stores-milvus>=0.1.22",
 "click>=8.1.7",
-"setuptools>=72.2.0"]
+"setuptools>=72.2.0",
+"llama-index-tools-google"]
 authors = [
     { name = "Elie Khoury", email = "elie.kh@gmail.com" },
 ]
@@ -35,4 +36,3 @@ py-modules=["assistant"]
 
 [tool.setuptools.packages]
 find = {}  # Scan the project directory with the default parameters
-

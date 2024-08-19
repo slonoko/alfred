@@ -11,7 +11,8 @@ from pydantic import BaseModel
 import logging
 from tqdm import tqdm
 
-SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"]
+SCOPES = ["https://www.googleapis.com/auth/gmail.readonly",
+          "https://www.googleapis.com/auth/gmail.compose",]
 
 
 class GmailReader(BaseReader, BaseModel):
@@ -20,7 +21,7 @@ class GmailReader(BaseReader, BaseModel):
     Reads emails
 
     Args:
-        max_results (int): Defaults to 10.
+        max_results (Optional[int]): Defaults to None.
         query (str): Gmail query. Defaults to None.
         service (Any): Gmail service. Defaults to None.
         results_per_page (Optional[int]): Max number of results per page. Defaults to 10.
@@ -29,9 +30,9 @@ class GmailReader(BaseReader, BaseModel):
 
     query: str = None
     use_iterative_parser: bool = False
-    max_results: int = 10
     service: Any = None
-    results_per_page: Optional[int]
+    max_results: Optional[int] = None
+    results_per_page: Optional[int] = None
 
     def load_data(self) -> List[Document]:
         """Load emails from the user's account"""
@@ -92,16 +93,42 @@ class GmailReader(BaseReader, BaseModel):
         if self.results_per_page:
             max_results = self.results_per_page
 
-        results = (
-            self.service.users()
-            .messages()
-            .list(userId="me", q=query, maxResults=int(max_results))
-            .execute()
-        )
-        messages = results.get("messages", [])
+        if(max_results):
+            results = (
+                self.service.users()
+                .messages()
+                .list(userId="me", q=query, maxResults=int(max_results))
+                .execute()
+            )
+            messages = results.get("messages", [])
 
-        if len(messages) < self.max_results:
-            # paginate if there are more results
+            if len(messages) < self.max_results:
+                # paginate if there are more results
+                while "nextPageToken" in results:
+                    page_token = results["nextPageToken"]
+                    results = (
+                        self.service.users()
+                        .messages()
+                        .list(
+                            userId="me",
+                            q=query,
+                            pageToken=page_token,
+                            maxResults=int(max_results),
+                        )
+                        .execute()
+                    )
+                    messages.extend(results["messages"])
+                    if len(messages) >= self.max_results:
+                        break
+        else:
+            results = (
+                self.service.users()
+                .messages()
+                .list(userId="me", q=query)
+                .execute()
+            )
+            messages = results.get("messages", [])
+
             while "nextPageToken" in results:
                 page_token = results["nextPageToken"]
                 results = (
@@ -110,14 +137,13 @@ class GmailReader(BaseReader, BaseModel):
                     .list(
                         userId="me",
                         q=query,
-                        pageToken=page_token,
-                        maxResults=int(max_results),
+                        pageToken=page_token
                     )
                     .execute()
                 )
                 messages.extend(results["messages"])
-                if len(messages) >= self.max_results:
-                    break
+
+
 
         result = []
         logging.info(f"Total number of messages found {len(messages)}")
@@ -193,8 +219,3 @@ class GmailReader(BaseReader, BaseModel):
             return body.decode("utf-8")
         except Exception as e:
             raise Exception("Can't parse message body" + str(e))
-
-
-if __name__ == "__main__":
-    reader = GmailReader(query="from:me after:2023-01-01")
-    print(reader.load_data())
