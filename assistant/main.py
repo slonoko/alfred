@@ -2,9 +2,9 @@ from llama_index.core import VectorStoreIndex, Settings, StorageContext
 from llama_index.core.chat_engine.types import ChatMode
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.llms.ollama import Ollama
-from llama_index.vector_stores.milvus import MilvusVectorStore
+from llama_index.vector_stores.chroma import ChromaVectorStore
 from gmail import GmailReader
-
+import chromadb
 import datetime
 import click
 import logging
@@ -39,7 +39,7 @@ def current_date(**kwargs) -> str:
     args:
         None
     """
-    return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    return f'Current date is {datetime.datetime.now().strftime("%A, %B %d, %Y")}, and time {datetime.datetime.now().strftime("%H:%M:%S")}'
 
 
 @click.group()
@@ -50,7 +50,7 @@ def cli():
 @click.command()
 def scan_emails():
     gmail_reader = GmailReader(
-        use_iterative_parser=True)
+        use_iterative_parser=True,max_results=100)
     init_ai()
     # check if storage already exists
     PERSIST_DIR = "./.storage"
@@ -60,9 +60,9 @@ def scan_emails():
 
     emails = gmail_reader.load_data()
 
-    vector_store = MilvusVectorStore(
-        uri="./.storage/mails.db", dim=1024, overwrite=True
-    )
+    chroma_client = chromadb.PersistentClient(path="./.storage/alfred_db")
+    chroma_collection = chroma_client.create_collection("alfred")
+    vector_store = ChromaVectorStore(chroma_collection=chroma_collection)
     storage_context = StorageContext.from_defaults(vector_store=vector_store)
     VectorStoreIndex.from_documents(
         emails, storage_context=storage_context, show_progress=True, use_async=True
@@ -79,7 +79,9 @@ def chat():
         description="This tool provides information about the current date and time"
     )
 
-    vector_store = MilvusVectorStore(uri="./.storage/mails.db", dim=1024)
+    chroma_client = chromadb.PersistentClient(path="./.storage/alfred_db")
+    chroma_collection = chroma_client.get_collection("alfred")
+    vector_store = ChromaVectorStore(chroma_collection=chroma_collection)
     index = VectorStoreIndex.from_vector_store(vector_store)
     query_engine = index.as_query_engine(llm=Settings.llm)
     email_reader_engine = QueryEngineTool(
