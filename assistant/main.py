@@ -14,6 +14,7 @@ from llama_index.core.tools import FunctionTool
 from llama_index.core.agent import ReActAgent
 from llama_index.core.tools import QueryEngineTool, ToolMetadata
 from llama_index.tools.google import GmailToolSpec
+from llama_index.tools.wikipedia import WikipediaToolSpec
 
 # tool_spec = GmailToolSpec()
 logging.basicConfig(stream=sys.stdout, level=logging.ERROR)
@@ -50,7 +51,7 @@ def cli():
 @click.command()
 def scan_emails():
     gmail_reader = GmailReader(
-        use_iterative_parser=True,max_results=100)
+        use_iterative_parser=True)
     init_ai()
     # check if storage already exists
     PERSIST_DIR = "./.storage"
@@ -92,8 +93,12 @@ def chat():
         )
     )
 
+    tool_spec = WikipediaToolSpec()
+    tools = []
+    tools.append(todays_info_engine)
+    tools.append(email_reader_engine)
     agent = ReActAgent.from_tools(
-        tools=[todays_info_engine, email_reader_engine], llm=Settings.llm, verbose=True, max_iterations=50)
+        tools=tools, llm=Settings.llm, verbose=True, max_iterations=50)
     agent.reset()
 
     command = input("Q: ")

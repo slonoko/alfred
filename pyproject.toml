@@ -26,8 +26,9 @@ dependencies = [
     "click>=8.1.7",
     "setuptools>=72.2.0",
     "llama-index-tools-google",
-    "chromadb",
-    "sentence-transformers"
+    "chromadb>=0.5.15",
+    "sentence-transformers",
+    "llama-index-tools-wikipedia"
 ]
 authors = [{ name = "Elie Khoury", email = "elie.kh@gmail.com" }]
 
