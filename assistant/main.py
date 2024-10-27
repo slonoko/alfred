@@ -15,6 +15,9 @@ from llama_index.core.agent import ReActAgent
 from llama_index.core.tools import QueryEngineTool, ToolMetadata
 from llama_index.tools.google import GmailToolSpec
 from llama_index.tools.wikipedia import WikipediaToolSpec
+from llama_index.core import PromptTemplate
+import prompt_template;
+import json;
 
 # tool_spec = GmailToolSpec()
 logging.basicConfig(stream=sys.stdout, level=logging.ERROR)
@@ -30,17 +33,15 @@ def init_ai():
 
     # ollama
     # https://github.com/ollama/ollama
-    Settings.llm = Ollama(model="llama3.1", request_timeout=360.0)
-
+    Settings.llm = Ollama(model="llama3.2:3b", request_timeout=360.0)
 
 def current_date(**kwargs) -> str:
     """
-    Get current date
-    
-    args:
-        None
+    This function returns the current date and time in a JSON format
     """
-    return f'Current date is {datetime.datetime.now().strftime("%A, %B %d, %Y")}, and time {datetime.datetime.now().strftime("%H:%M:%S")}'
+    current_datetime = datetime.datetime.now()
+    output = {"date": current_datetime.strftime("%A, %B %d, %Y"),"time": current_datetime.strftime("%H:%M:%S")} 
+    return json.dumps(output)
 
 
 @click.group()
@@ -53,15 +54,9 @@ def scan_emails():
     gmail_reader = GmailReader(
         use_iterative_parser=True)
     init_ai()
-    # check if storage already exists
-    PERSIST_DIR = "./.storage"
-    if not os.path.exists(PERSIST_DIR):
-        # load the documents and create the index
-        os.mkdir(".storage")
-
     emails = gmail_reader.load_data()
 
-    chroma_client = chromadb.PersistentClient(path="./.storage/alfred_db")
+    chroma_client = chromadb.HttpClient(host="localhost", port=8000)
     chroma_collection = chroma_client.create_collection("alfred")
     vector_store = ChromaVectorStore(chroma_collection=chroma_collection)
     storage_context = StorageContext.from_defaults(vector_store=vector_store)
@@ -80,7 +75,7 @@ def chat():
         description="This tool provides information about the current date and time"
     )
 
-    chroma_client = chromadb.PersistentClient(path="./.storage/alfred_db")
+    chroma_client = chromadb.HttpClient(host="localhost", port=8000)
     chroma_collection = chroma_client.get_collection("alfred")
     vector_store = ChromaVectorStore(chroma_collection=chroma_collection)
     index = VectorStoreIndex.from_vector_store(vector_store)
@@ -89,7 +84,7 @@ def chat():
         query_engine=query_engine,
         metadata=ToolMetadata(
             name="email_reader_engine",
-            description="This tool can retrieve email content from google mail inbox"
+            description="Primary tool to search through emails for information and answer questions. "
         )
     )
 
@@ -98,8 +93,11 @@ def chat():
     tools.append(todays_info_engine)
     tools.append(email_reader_engine)
     agent = ReActAgent.from_tools(
-        tools=tools, llm=Settings.llm, verbose=True, max_iterations=50)
-    agent.reset()
+        tools=tools, llm=Settings.llm, verbose=True, max_iterations=25)
+
+    react_system_prompt = PromptTemplate(prompt_template.react_system_header_str)
+
+    #agent.update_prompts({"agent_worker:system_prompt": react_system_prompt})
 
     command = input("Q: ")
     while (command != "exit"):
