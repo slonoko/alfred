@@ -33,7 +33,7 @@ def init_ai():
 
     # ollama
     # https://github.com/ollama/ollama
-    Settings.llm = Ollama(model="llama3.1", request_timeout=360.0)
+    Settings.llm = Ollama(model="llama3.2", request_timeout=360.0)
 
 def current_date(**kwargs) -> str:
     """
