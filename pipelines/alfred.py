@@ -8,10 +8,6 @@ description: A pipeline for retrieving relevant information from a knowledge bas
 requirements: llama-index,chromadb,llama-index-vector-stores-chroma,llama-index-core,llama-index-llms-ollama,llama-index-embeddings-huggingface
 """
 
-# import importlib
-# spec = importlib.util.spec_from_file_location("Pipeline", "pipelines/failed/alfred.py")
-# module = importlib.util.module_from_spec(spec)
-# spec.loader.exec_module(module)
 from typing import List, Union, Generator, Iterator
 import datetime
 from llama_index.core.tools import FunctionTool
@@ -37,7 +33,7 @@ class Pipeline:
         # This function is called when the server is started.
         try:
             Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-m3")
-            Settings.llm = Ollama(model="llama3.1", base_url="http://ollama:11434", request_timeout=360.0)
+            Settings.llm = Ollama(model="llama3.2:3b", base_url="http://ollama:11434", request_timeout=360.0)
         except Exception as e:
             logging.error(f"An error occurred while setting LLM: {e}")
         pass
@@ -80,7 +76,7 @@ class Pipeline:
 
 
         agent = ReActAgent.from_tools(
-            tools=tools, llm=Settings.llm, verbose=True, max_iterations=10)
+            tools=tools, llm=Settings.llm, verbose=True, max_iterations=50)
         response = agent.query(user_message)
 
 
