@@ -33,7 +33,7 @@ class Pipeline:
         # This function is called when the server is started.
         try:
             Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-m3")
-            Settings.llm = Ollama(model="llama3.2:3b", base_url="http://ollama:11434", request_timeout=360.0)
+            Settings.llm = Ollama(model="llama3.1", base_url="http://ollama:11434", request_timeout=360.0)
         except Exception as e:
             logging.error(f"An error occurred while setting LLM: {e}")
         pass

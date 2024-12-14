@@ -167,7 +167,7 @@ class GmailReader(BaseReader, BaseModel):
         message_data = (
             self.service.users()
             .messages()
-            .get(format="raw", userId="me", id=message_id)
+            .get(format="full", userId="me", id=message_id)
             .execute()
         )
         if self.use_iterative_parser:
@@ -189,7 +189,7 @@ class GmailReader(BaseReader, BaseModel):
 
     def extract_message_body_iterative(self, message: dict):
         if message["raw"]:
-            body = base64.urlsafe_b64decode(message["raw"].encode("utf-8"))
+            body = base64.urlsafe_b64decode(message["raw"])
             mime_msg = email.message_from_bytes(body)
         else:
             mime_msg = message
@@ -198,7 +198,7 @@ class GmailReader(BaseReader, BaseModel):
         if mime_msg.get_content_type() == "text/plain":
             plain_text = mime_msg.get_payload(decode=True)
             charset = mime_msg.get_content_charset("utf-8")
-            body_text = plain_text.decode(charset).encode("utf-8").decode("utf-8")
+            body_text = plain_text.decode(charset)
 
         elif mime_msg.get_content_maintype() == "multipart":
             msg_parts = mime_msg.get_payload()
@@ -211,7 +211,7 @@ class GmailReader(BaseReader, BaseModel):
         from bs4 import BeautifulSoup
 
         try:
-            body = base64.urlsafe_b64decode(message["raw"].encode("utf-8"))
+            body = base64.urlsafe_b64decode(message["raw"])
             mime_msg = email.message_from_bytes(body)
 
             # If the message body contains HTML, parse it with BeautifulSoup
@@ -220,4 +220,5 @@ class GmailReader(BaseReader, BaseModel):
                 body = soup.get_text()
             return body.decode("utf-8")
         except Exception as e:
+            print("failed")
             raise Exception("Can't parse message body" + str(e))
