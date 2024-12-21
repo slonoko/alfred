@@ -20,7 +20,7 @@ class Tools:
     class Valves(BaseModel):
         pass
 
-    def current_date(self) -> str:
+    def current_date_and_time(self) -> str:
         """
         Retrieves the current date and time
         """

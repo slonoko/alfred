@@ -13,8 +13,6 @@ import os
 from llama_index.core.tools import FunctionTool
 from llama_index.core.agent import ReActAgent
 from llama_index.core.tools import QueryEngineTool, ToolMetadata
-from llama_index.tools.google import GmailToolSpec
-from llama_index.tools.wikipedia import WikipediaToolSpec
 from llama_index.core import PromptTemplate
 import prompt_template;
 import json;
@@ -88,15 +86,13 @@ def chat():
         )
     )
 
-    tool_spec = WikipediaToolSpec()
     tools = []
     tools.append(todays_info_engine)
     tools.append(email_reader_engine)
     agent = ReActAgent.from_tools(
         tools=tools, llm=Settings.llm, verbose=True, max_iterations=25)
 
-    react_system_prompt = PromptTemplate(prompt_template.react_system_header_str)
-
+    #react_system_prompt = PromptTemplate(prompt_template.react_system_header_str)
     #agent.update_prompts({"agent_worker:system_prompt": react_system_prompt})
 
     command = input("Q: ")

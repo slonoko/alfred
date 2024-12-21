@@ -3,3 +3,6 @@ chromadb
 llama-index-vector-stores-chroma==0.1.5
 llama-index-core
 llama-index-llms-ollama
+llama-index-embeddings-huggingface
+google-api-python-client
+google-auth-oauthlib

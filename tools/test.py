@@ -14,23 +14,22 @@ from pydantic import BaseModel, Field
 from llama_index.core.retrievers import VectorIndexAutoRetriever
 from llama_index.core.vector_stores.types import MetadataInfo, VectorStoreInfo
 
-from gmail import GmailReader
+from email_reader import GmailReader
 
 gmail_reader = GmailReader(
-        use_iterative_parser=True)
-gmail_reader.query = "after:2024/01/01 rhodos"
+        use_iterative_parser=False)
+gmail_reader.query = "after:2024/01/01 samsun"
 emails = gmail_reader.load_data()
 print(len(emails))
-
-""" 
-documents = None
+ 
+""" documents = None
 index = None
 
 Settings.embed_model = HuggingFaceEmbedding(
         model_name="BAAI/bge-m3")
-Settings.llm = Ollama(model="llama3.2", base_url="http://khoury:11434",request_timeout=360.0)
+Settings.llm = Ollama(model="llama3.2", base_url="http://localhost:11434",request_timeout=360.0)
 
-chroma_client = chromadb.HttpClient(host="khoury", port=8000) 
+chroma_client = chromadb.HttpClient(host="localhost", port=8000) 
 print("Chroma is connected? " + str(chroma_client.heartbeat()>0))
 
 chroma_collection = chroma_client.get_collection("alfred")
