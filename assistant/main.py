@@ -31,7 +31,7 @@ def init_ai():
 
     # ollama
     # https://github.com/ollama/ollama
-    Settings.llm = Ollama(model="llama3.2", request_timeout=360.0)
+    Settings.llm = Ollama(model="llama3.1", request_timeout=360.0)
 
 def current_date(**kwargs) -> str:
     """
@@ -55,7 +55,11 @@ def scan_emails():
     emails = gmail_reader.load_data()
 
     chroma_client = chromadb.HttpClient(host="localhost", port=8000)
-    chroma_collection = chroma_client.create_collection("alfred")
+    try:
+        chroma_collection = chroma_client.create_collection("alfred")
+    except:
+        chroma_collection = chroma_client.get_collection("alfred")
+        
     vector_store = ChromaVectorStore(chroma_collection=chroma_collection)
     storage_context = StorageContext.from_defaults(vector_store=vector_store)
     VectorStoreIndex.from_documents(
