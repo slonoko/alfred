@@ -5,7 +5,7 @@ date: 2024-10-23
 version: 1.0
 license: MIT
 description: A pipeline for retrieving relevant information from a knowledge base using the Llama Index library.
-requirements: llama-index,chromadb,llama-index-vector-stores-chroma,llama-index-core,llama-index-llms-ollama,llama-index-embeddings-huggingface,llama-index-embeddings-ollama
+requirements: llama-index,chromadb,llama-index-vector-stores-chroma,llama-index-core,llama-index-llms-ollama,llama-index-embeddings-huggingface,llama-index-embeddings-ollama, llama-index-tools-code-interpreter
 """
 
 from typing import List, Union, Generator, Iterator
@@ -22,6 +22,7 @@ from llama_index.core.base.response.schema import Response, StreamingResponse
 from llama_index.embeddings.ollama import OllamaEmbedding
 from pydantic import BaseModel
 import os
+from llama_index.tools.code_interpreter import CodeInterpreterToolSpec
 
 class Pipeline:
 
@@ -69,8 +70,11 @@ class Pipeline:
             description="This tool provides information about the current date and time"
         )
 
+        code_spec = CodeInterpreterToolSpec()
+
         tools = []
         tools.append(todays_info_engine)
+        tools.append(code_spec.to_tool_list()[0])
         try:
             logging.info(f"Chroma client is connected")
             chroma_collection = chroma_db.get_collection("alfred")
