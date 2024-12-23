@@ -5,7 +5,7 @@ date: 2024-10-23
 version: 1.0
 license: MIT
 description: A pipeline for retrieving relevant information from a knowledge base using the Llama Index library.
-requirements: llama-index,chromadb,llama-index-vector-stores-chroma,llama-index-core,llama-index-llms-ollama,llama-index-embeddings-huggingface
+requirements: llama-index,chromadb,llama-index-vector-stores-chroma,llama-index-core,llama-index-llms-ollama,llama-index-embeddings-huggingface,llama-index-embeddings-ollama
 """
 
 from typing import List, Union, Generator, Iterator
@@ -20,6 +20,7 @@ from llama_index.core.tools import QueryEngineTool, ToolMetadata
 import logging
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.core.base.response.schema import Response, StreamingResponse
+from llama_index.embeddings.ollama import OllamaEmbedding
 
 class Pipeline:
     def __init__(self):
@@ -31,9 +32,16 @@ class Pipeline:
 
     async def on_startup(self):
         # This function is called when the server is started.
+        ollama_embedding = OllamaEmbedding(
+            model_name="nomic-embed-text",
+            base_url="http://localhost:11434"
+        )
+
+        ollama_llm = Ollama(model="llama3.2", base_url="http://localhost:11434", request_timeout=360.0)
+        
         try:
-            Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-m3")
-            Settings.llm = Ollama(model="llama3.1", base_url="http://ollama:11434", request_timeout=360.0)
+            Settings.embed_model = ollama_embedding
+            Settings.llm = ollama_llm
         except Exception as e:
             logging.error(f"An error occurred while setting LLM: {e}")
         pass
@@ -57,7 +65,7 @@ class Pipeline:
         tools = []
         tools.append(todays_info_engine)
         try:
-            chroma_client = chromadb.HttpClient(host="chromadb", port=8000) # .PersistentClient(path="./.storage/alfred_db")
+            chroma_client = chromadb.HttpClient(host="localhost", port=8000) # .PersistentClient(path="./.storage/alfred_db")
             logging.info(f"Chroma client is connected")
             chroma_collection = chroma_client.get_collection("alfred")
             vector_store = ChromaVectorStore(chroma_collection=chroma_collection)

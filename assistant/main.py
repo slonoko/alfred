@@ -11,27 +11,54 @@ import logging
 import sys
 import os
 from llama_index.core.tools import FunctionTool
+from llama_index.core.agent import AgentChatResponse
 from llama_index.core.agent import ReActAgent
 from llama_index.core.tools import QueryEngineTool, ToolMetadata
 from llama_index.core import PromptTemplate
 import prompt_template;
 import json;
+from llama_index.llms.azure_openai import AzureOpenAI
+from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
+from llama_index.core import VectorStoreIndex, SimpleDirectoryReader
+from llama_index.embeddings.ollama import OllamaEmbedding
 
-# tool_spec = GmailToolSpec()
-logging.basicConfig(stream=sys.stdout, level=logging.ERROR)
+logging.basicConfig(stream=sys.stdout, level=logging.WARN)
 logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
 
-#https://github.com/run-llama/llama-agents
+
+api_key = "xxx"
+azure_endpoint = "https://xxx.openai.azure.com/"
+api_version = "2024-05-01-preview"
+
+llm = AzureOpenAI(
+    model="gpt-4o-mini",
+    deployment_name="gpt-4o-mini",
+    api_key=api_key,
+    azure_endpoint=azure_endpoint,
+    api_version=api_version,
+)
+
+# You need to deploy your own embedding model as well as your own chat completion model
+embed_model = AzureOpenAIEmbedding(
+    model="text-embedding-ada-002",
+    deployment_name="text-embedding-ada-002",
+    api_key=api_key,
+    azure_endpoint=azure_endpoint,
+    api_version=api_version,
+)
+
+ollama_embedding = OllamaEmbedding(
+    model_name="nomic-embed-text",
+    base_url="http://localhost:11434"
+)
+
 
 def init_ai():
-    # bge-base embedding model
-    Settings.embed_model = HuggingFaceEmbedding(
-        model_name="BAAI/bge-m3")  # https://huggingface.co/BAAI/bge-m3
-    # Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-base-en-v1.5")
+    Settings.embed_model = ollama_embedding # HuggingFaceEmbedding(model_name="BAAI/bge-m3")  # https://huggingface.co/BAAI/bge-m3
 
     # ollama
     # https://github.com/ollama/ollama
-    Settings.llm = Ollama(model="llama3.2:1b", base_url="http://localhost:11434", request_timeout=360.0)
+    Settings.llm = Ollama(model="llama3.2", base_url="http://localhost:11434", request_timeout=360.0)
 
 def current_date(**kwargs) -> str:
     """
@@ -104,11 +131,8 @@ def chat():
         if (command=="new"):
             agent.reset()
         else:
-            print(
-                agent.chat(
-                    command
-                )
-            )
+            response:AgentChatResponse = agent.chat(command)
+            print(response)
         command = input("Q: ")
 
 
