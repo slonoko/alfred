@@ -21,6 +21,7 @@ from llama_index.llms.azure_openai import AzureOpenAI
 from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader
 from llama_index.embeddings.ollama import OllamaEmbedding
+from llama_index.tools.code_interpreter import CodeInterpreterToolSpec
 
 logging.basicConfig(stream=sys.stdout, level=logging.WARN)
 logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
@@ -82,15 +83,13 @@ def scan_emails():
     emails = gmail_reader.load_data()
 
     chroma_client = chromadb.HttpClient(host="localhost", port=8000)
-    try:
-        chroma_collection = chroma_client.create_collection("alfred")
-    except:
-        chroma_collection = chroma_client.get_collection("alfred")
+    
+    chroma_collection = chroma_client.get_or_create_collection("alfred")
         
     vector_store = ChromaVectorStore(chroma_collection=chroma_collection)
     storage_context = StorageContext.from_defaults(vector_store=vector_store)
     VectorStoreIndex.from_documents(
-        emails, storage_context=storage_context, show_progress=True, use_async=True
+        emails, storage_context=storage_context, embed_model=Settings.embed_model ,show_progress=True, use_async=True
     )
 
 
@@ -117,9 +116,12 @@ def chat():
         )
     )
 
+    code_spec = CodeInterpreterToolSpec()
+
     tools = []
     tools.append(todays_info_engine)
     tools.append(email_reader_engine)
+    tools.append(code_spec.to_tool_list()[0])
     agent = ReActAgent.from_tools(
         tools=tools, llm=Settings.llm, verbose=True, max_iterations=25)
 

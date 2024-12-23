@@ -7,3 +7,5 @@ llama-index-embeddings-huggingface
 google-api-python-client
 google-auth-oauthlib
 llama-index-embeddings-ollama
+llama-agents
+llama-index-tools-code-interpreter
