@@ -18,7 +18,6 @@ import chromadb
 from llama_index.vector_stores.chroma import ChromaVectorStore
 from llama_index.core.tools import QueryEngineTool, ToolMetadata
 import logging
-from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.core.base.response.schema import Response, StreamingResponse
 from llama_index.embeddings.ollama import OllamaEmbedding
 
