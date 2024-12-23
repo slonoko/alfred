@@ -20,29 +20,78 @@ from llama_index.core.tools import QueryEngineTool, ToolMetadata
 import logging
 from llama_index.core.base.response.schema import Response, StreamingResponse
 from llama_index.embeddings.ollama import OllamaEmbedding
+from pydantic import BaseModel
+import os
 
 class Pipeline:
+
+    class Valves(BaseModel):
+        LLAMAINDEX_OLLAMA_BASE_URL: str
+        LLAMAINDEX_MODEL_NAME: str
+        LLAMAINDEX_EMBEDDING_MODEL_NAME: str
+        CHROMA_HOST: str
+        CHROMA_PORT: int
+
     def __init__(self):
         self.documents = None
         self.index = None
+        self.agent = None
+        self.valves = self.Valves(
+            **{
+                "LLAMAINDEX_OLLAMA_BASE_URL": os.getenv("LLAMAINDEX_OLLAMA_BASE_URL", "http://localhost:11434"),
+                "LLAMAINDEX_MODEL_NAME": os.getenv("LLAMAINDEX_MODEL_NAME", "llama3.2:1b"),
+                "LLAMAINDEX_EMBEDDING_MODEL_NAME": os.getenv("LLAMAINDEX_EMBEDDING_MODEL_NAME", "bge-m3"),
+                "CHROMA_HOST": os.getenv("CHROMA_HOST", "localhost"),
+                "CHROMA_PORT": int(os.getenv("CHROMA_PORT", 8000)),
+            }
+        )
 
     def current_date(self, **kwargs) -> str:
         return f'Current date is {datetime.datetime.now().strftime("%A, %B %d, %Y")}, and time {datetime.datetime.now().strftime("%H:%M:%S")}'
 
     async def on_startup(self):
         # This function is called when the server is started.
-        ollama_embedding = OllamaEmbedding(
-            model_name="nomic-embed-text",
-            base_url="http://localhost:11434"
+        Settings.embed_model = OllamaEmbedding(
+            model_name=self.valves.LLAMAINDEX_EMBEDDING_MODEL_NAME,
+            base_url=self.valves.LLAMAINDEX_OLLAMA_BASE_URL,
         )
 
-        ollama_llm = Ollama(model="llama3.2", base_url="http://localhost:11434", request_timeout=360.0)
+        Settings.llm = Ollama(
+            model=self.valves.LLAMAINDEX_MODEL_NAME,
+            base_url=self.valves.LLAMAINDEX_OLLAMA_BASE_URL,
+            request_timeout=360.0)
         
+        chroma_db = chromadb.HttpClient(host=self.valves.CHROMA_HOST, port=self.valves.CHROMA_PORT)
+
+        todays_info_engine = FunctionTool.from_defaults(
+            fn=self.current_date,
+            name="todays_info_engine",
+            description="This tool provides information about the current date and time"
+        )
+
+        tools = []
+        tools.append(todays_info_engine)
         try:
-            Settings.embed_model = ollama_embedding
-            Settings.llm = ollama_llm
+            logging.info(f"Chroma client is connected")
+            chroma_collection = chroma_db.get_collection("alfred")
+            vector_store = ChromaVectorStore(chroma_collection=chroma_collection)
+            index = VectorStoreIndex.from_vector_store(vector_store)
+            query_engine = index.as_query_engine(llm=Settings.llm)
+
+            email_reader_engine = QueryEngineTool(
+                query_engine=query_engine,
+                metadata=ToolMetadata(
+                    name="email_reader",
+                    description="This tool can retrieve email content from google mail inbox"
+                )
+            )
+            tools.append(email_reader_engine)
         except Exception as e:
-            logging.error(f"An error occurred while setting LLM: {e}")
+            logging.error(f"An error occurred: {e}")
+
+
+        self.agent = ReActAgent.from_tools(
+            tools=tools, llm=Settings.llm, verbose=True, max_iterations=50)
         pass
 
     async def on_shutdown(self):
@@ -55,36 +104,8 @@ class Pipeline:
         # This is where you can add your custom RAG pipeline.
         # Typically, you would retrieve relevant information from your knowledge base and synthesize it to generate a response.
 
-        todays_info_engine = FunctionTool.from_defaults(
-            fn=self.current_date,
-            name="todays_info_engine",
-            description="This tool provides information about the current date and time"
-        )
 
-        tools = []
-        tools.append(todays_info_engine)
-        try:
-            chroma_client = chromadb.HttpClient(host="localhost", port=8000) # .PersistentClient(path="./.storage/alfred_db")
-            logging.info(f"Chroma client is connected")
-            chroma_collection = chroma_client.get_collection("alfred")
-            vector_store = ChromaVectorStore(chroma_collection=chroma_collection)
-            index = VectorStoreIndex.from_vector_store(vector_store)
-            query_engine = index.as_query_engine(llm=Settings.llm)
-            email_reader_engine = QueryEngineTool(
-                query_engine=query_engine,
-                metadata=ToolMetadata(
-                    name="email_reader_engine",
-                    description="This tool can retrieve email content from google mail inbox"
-                )
-            )
-            tools.append(email_reader_engine)
-        except Exception as e:
-            logging.error(f"An error occurred: {e}")
-
-
-        agent = ReActAgent.from_tools(
-            tools=tools, llm=Settings.llm, verbose=True, max_iterations=50)
-        response = agent.query(user_message)
+        response = self.agent.query(user_message)
 
 
         if isinstance(response, Response):
