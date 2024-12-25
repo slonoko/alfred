@@ -9,3 +9,4 @@ google-auth-oauthlib
 llama-index-embeddings-ollama
 llama-agents
 llama-index-tools-code-interpreter
+llama-index-tools-vector-db

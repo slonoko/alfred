@@ -21,7 +21,8 @@ from llama_index.llms.azure_openai import AzureOpenAI
 from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader
 from llama_index.embeddings.ollama import OllamaEmbedding
-from llama_index.tools.code_interpreter import CodeInterpreterToolSpec
+from tools.code_interpreter import CodeInterpreterToolSpec
+from tools.date_time_retriever import CurrentDateTimeToolSpec
 
 logging.basicConfig(stream=sys.stdout, level=logging.WARN)
 logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
@@ -47,9 +48,9 @@ embed_model = AzureOpenAIEmbedding(
     azure_endpoint=azure_endpoint,
     api_version=api_version,
 )
-
+ # "nomic-embed-text",
 ollama_embedding = OllamaEmbedding(
-    model_name="nomic-embed-text",
+    model_name= "bge-m3",
     base_url="http://localhost:11434"
 )
 
@@ -60,15 +61,6 @@ def init_ai():
     # ollama
     # https://github.com/ollama/ollama
     Settings.llm = Ollama(model="llama3.2", base_url="http://localhost:11434", request_timeout=360.0)
-
-def current_date(**kwargs) -> str:
-    """
-    This function returns the current date and time in a JSON format
-    """
-    current_datetime = datetime.datetime.now()
-    output = {"date": current_datetime.strftime("%A, %B %d, %Y"),"time": current_datetime.strftime("%H:%M:%S")} 
-    return json.dumps(output)
-
 
 @click.group()
 def cli():
@@ -97,12 +89,6 @@ def scan_emails():
 def chat():
     init_ai()
 
-    todays_info_engine = FunctionTool.from_defaults(
-        fn=current_date,
-        name="todays_info_engine",
-        description="This tool provides information about the current date and time"
-    )
-
     chroma_client = chromadb.HttpClient(host="localhost", port=8000)
     chroma_collection = chroma_client.get_collection("alfred")
     vector_store = ChromaVectorStore(chroma_collection=chroma_collection)
@@ -112,14 +98,15 @@ def chat():
         query_engine=query_engine,
         metadata=ToolMetadata(
             name="email_reader_engine",
-            description="Primary tool to search through emails for information and answer questions. "
+            description="Primary tool to search through emails for information and answer questions."
         )
     )
 
+    todays_info_engine = CurrentDateTimeToolSpec()
     code_spec = CodeInterpreterToolSpec()
 
     tools = []
-    tools.append(todays_info_engine)
+    tools.append(todays_info_engine.to_tool_list()[0])
     tools.append(email_reader_engine)
     tools.append(code_spec.to_tool_list()[0])
     agent = ReActAgent.from_tools(
