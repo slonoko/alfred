@@ -3,7 +3,6 @@ from llama_index.core.chat_engine.types import ChatMode
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.llms.ollama import Ollama
 from llama_index.vector_stores.chroma import ChromaVectorStore
-from gmail import GmailReader
 import chromadb
 import datetime
 import click
@@ -33,6 +32,7 @@ from llama_index.core.memory import (
 )
 from llama_index.core.llms import ChatMessage
 import nest_asyncio
+from llama_index.readers.google import GmailReader
 
 logging.basicConfig(stream=sys.stdout, level=logging.ERROR)
 logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
@@ -75,6 +75,7 @@ chroma_client = chromadb.HttpClient(host="localhost", port=8000)
 alfred_collection = chroma_client.get_or_create_collection("alfred")
 history_collection = chroma_client.get_or_create_collection("alfred_history")
 
+
 @click.group()
 def cli():
     pass
@@ -82,6 +83,7 @@ def cli():
 
 @click.command()
 def scan_emails():
+    # https://github.com/run-llama/llama-hub/tree/main/llama_hub/gmail
     gmail_reader = GmailReader(
         use_iterative_parser=True)
     emails = gmail_reader.load_data()

@@ -12,3 +12,5 @@ llama-index-tools-code-interpreter
 llama-index-tools-vector-db
 llama-index-agent-coa 
 llama-parse
+llama-hub
+llama-index-readers-google
