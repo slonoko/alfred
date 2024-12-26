@@ -15,7 +15,6 @@ from llama_index.core.agent import AgentChatResponse
 from llama_index.core.agent import ReActAgent
 from llama_index.core.tools import QueryEngineTool, ToolMetadata
 from llama_index.core import PromptTemplate
-import prompt_template;
 import json;
 from llama_index.llms.azure_openai import AzureOpenAI
 from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
@@ -26,10 +25,20 @@ from tools.date_time_retriever import CurrentDateTimeToolSpec
 from llama_index.tools.vector_db.base import VectorDBToolSpec
 from llama_index.core.agent import AgentRunner
 from llama_index.agent.coa import CoAAgentWorker
+from llama_index.tools.google import GmailToolSpec
+from llama_index.core.memory import (
+    VectorMemory,
+    SimpleComposableMemory,
+    ChatMemoryBuffer,
+)
+from llama_index.core.llms import ChatMessage
+import nest_asyncio
 
-logging.basicConfig(stream=sys.stdout, level=logging.WARN)
+logging.basicConfig(stream=sys.stdout, level=logging.ERROR)
 logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
 
+
+nest_asyncio.apply()
 
 api_key = "xxx"
 azure_endpoint = "https://xxx.openai.azure.com/"
@@ -57,13 +66,14 @@ ollama_embedding = OllamaEmbedding(
     base_url="http://localhost:11434"
 )
 
+ollama_llm = Ollama(model="llama3.1", base_url="http://localhost:11434", request_timeout=360.0)
 
-def init_ai():
-    Settings.embed_model = ollama_embedding # HuggingFaceEmbedding(model_name="BAAI/bge-m3")  # https://huggingface.co/BAAI/bge-m3
+Settings.embed_model = ollama_embedding
+Settings.llm = ollama_llm
 
-    # ollama
-    # https://github.com/ollama/ollama
-    Settings.llm = Ollama(model="llama3.1", base_url="http://localhost:11434", request_timeout=360.0)
+chroma_client = chromadb.HttpClient(host="localhost", port=8000)
+alfred_collection = chroma_client.get_or_create_collection("alfred")
+history_collection = chroma_client.get_or_create_collection("alfred_history")
 
 @click.group()
 def cli():
@@ -74,14 +84,9 @@ def cli():
 def scan_emails():
     gmail_reader = GmailReader(
         use_iterative_parser=True)
-    init_ai()
     emails = gmail_reader.load_data()
-
-    chroma_client = chromadb.HttpClient(host="localhost", port=8000)
-    
-    chroma_collection = chroma_client.get_or_create_collection("alfred")
         
-    vector_store = ChromaVectorStore(chroma_collection=chroma_collection)
+    vector_store = ChromaVectorStore(chroma_collection=alfred_collection)
     storage_context = StorageContext.from_defaults(vector_store=vector_store)
     VectorStoreIndex.from_documents(
         emails, storage_context=storage_context, embed_model=Settings.embed_model ,show_progress=True, use_async=True
@@ -90,13 +95,48 @@ def scan_emails():
 
 @click.command()
 def chat():
-    init_ai()
+    vector_store = ChromaVectorStore(chroma_collection=alfred_collection)
+    history_store = ChromaVectorStore(chroma_collection=history_collection)
 
-    chroma_client = chromadb.HttpClient(host="localhost", port=8000)
-    chroma_collection = chroma_client.get_collection("alfred")
-    vector_store = ChromaVectorStore(chroma_collection=chroma_collection)
+    vector_memory = VectorMemory.from_defaults(
+        vector_store=None,  # leave as None to use default in-memory vector store
+        embed_model=Settings.embed_model,
+        retriever_kwargs={"similarity_top_k": 1},
+    )   
+    chat_memory_buffer = ChatMemoryBuffer.from_defaults()
+
+    composable_memory = SimpleComposableMemory.from_defaults(
+        primary_memory=chat_memory_buffer,
+        secondary_memory_sources=[vector_memory],
+    )
+
     index = VectorStoreIndex.from_vector_store(vector_store)
-    query_engine = index.as_query_engine(llm=Settings.llm)
+    query_engine = index.as_query_engine(llm=Settings.llm, similarity_top_k=3)
+
+    # gmail_spec = GmailToolSpec()
+    # gmail_agent = ReActAgent.from_tools(
+    #     tools=gmail_spec.to_tool_list(), llm=Settings.llm, verbose=True)
+    
+    todays_info_spec = CurrentDateTimeToolSpec()
+    todays_info_agent = ReActAgent.from_tools(
+        tools=todays_info_spec.to_tool_list(), llm=Settings.llm, verbose=True)
+
+    code_interpreter_spec = CodeInterpreterToolSpec()
+    code_interpreter_agent = ReActAgent.from_tools(
+        tools=code_interpreter_spec.to_tool_list(), llm=Settings.llm, verbose=True)
+    
+    date_engine = QueryEngineTool(query_engine=todays_info_agent, metadata=ToolMetadata(
+            name="current_date_and_time",
+            description="A function that returns the current date and time"
+        )
+    )
+
+    code_interpreter_engine = QueryEngineTool(query_engine=code_interpreter_agent, metadata=ToolMetadata(
+            name="code_interpreter_in_python",
+            description="A function to execute python code, and return the stdout and stderr"
+        )
+    )
+
     email_reader_engine = QueryEngineTool(
         query_engine=query_engine,
         metadata=ToolMetadata(
@@ -105,18 +145,9 @@ def chat():
         )
     )
 
-    todays_info_engine = CurrentDateTimeToolSpec()
-    code_spec = CodeInterpreterToolSpec()
-
-    tools = []
-    tools.append(todays_info_engine.to_tool_list()[0])
-    tools.append(email_reader_engine)
-    #tools.append(code_spec.to_tool_list()[0])
+    tools = [date_engine, code_interpreter_engine, email_reader_engine]
     agent = ReActAgent.from_tools(
-        tools=tools, llm=Settings.llm, verbose=True, max_iterations=25)
-
-    #react_system_prompt = PromptTemplate(prompt_template.react_system_header_str)
-    #agent.update_prompts({"agent_worker:system_prompt": react_system_prompt})
+        tools=tools, llm=Settings.llm, verbose=True, memory=composable_memory)
 
     command = input("Q: ")
     while (command != "exit"):
