@@ -26,7 +26,7 @@ class CodeInterpreterToolSpec(BaseToolSpec):
         The code passed to this functuon is executed in isolation. It should be complete at the time it is passed to this function.
 
         You should interpret the output and errors returned from this function, and attempt to fix any problems.
-        If you cannot fix the error, show the code to the user and ask for help
+        If you cannot fix the error, show the code to the user and ask for help. If an output is received, show the result to the user or provide it as input to whatever next step is.
 
         It is not possible to return graphics or other complicated data from this function. If the user cannot see the output, save it to a file and tell the user.
         """

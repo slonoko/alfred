@@ -18,4 +18,4 @@ class CurrentDateTimeToolSpec(BaseToolSpec):
         The time is in GMT format. it is currently not possible to convert to another timezone.
 
         """
-        return f'Returns the current date is {datetime.datetime.now().strftime("%A, %B %d, %Y")}, and time {datetime.datetime.now().strftime("%H:%M:%S")}. tell the user that this is GMT.'
+        return f'Returns the current date is {datetime.datetime.now().strftime("%A, %B %d, %Y")}, and time {datetime.datetime.now().strftime("%H:%M:%S")}. make sure to answer the user and tell the user that this is GMT.'

@@ -23,6 +23,9 @@ from llama_index.core import VectorStoreIndex, SimpleDirectoryReader
 from llama_index.embeddings.ollama import OllamaEmbedding
 from tools.code_interpreter import CodeInterpreterToolSpec
 from tools.date_time_retriever import CurrentDateTimeToolSpec
+from llama_index.tools.vector_db.base import VectorDBToolSpec
+from llama_index.core.agent import AgentRunner
+from llama_index.agent.coa import CoAAgentWorker
 
 logging.basicConfig(stream=sys.stdout, level=logging.WARN)
 logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
@@ -60,7 +63,7 @@ def init_ai():
 
     # ollama
     # https://github.com/ollama/ollama
-    Settings.llm = Ollama(model="llama3.2", base_url="http://localhost:11434", request_timeout=360.0)
+    Settings.llm = Ollama(model="llama3.1", base_url="http://localhost:11434", request_timeout=360.0)
 
 @click.group()
 def cli():
@@ -97,8 +100,8 @@ def chat():
     email_reader_engine = QueryEngineTool(
         query_engine=query_engine,
         metadata=ToolMetadata(
-            name="email_reader_engine",
-            description="Primary tool to search through emails for information and answer questions."
+            name="emails_database_retriever",
+            description="Primary tool to search through emails for information and answer questions. if results are found, make sure to answer the user"
         )
     )
 
@@ -108,7 +111,7 @@ def chat():
     tools = []
     tools.append(todays_info_engine.to_tool_list()[0])
     tools.append(email_reader_engine)
-    tools.append(code_spec.to_tool_list()[0])
+    #tools.append(code_spec.to_tool_list()[0])
     agent = ReActAgent.from_tools(
         tools=tools, llm=Settings.llm, verbose=True, max_iterations=25)
 
