@@ -149,7 +149,7 @@ def chat():
     )
 
     tools = [date_engine, code_interpreter_engine, email_reader_engine]
-    agent = ReActAgent.from_tools(
+    agent = AgentRunner.from_llm(
         tools=tools, llm=Settings.llm, verbose=True, memory=composable_memory)
 
     command = input("Q: ")
