@@ -31,8 +31,8 @@ from llama_index.core.memory import (
 from llama_index.core.llms import ChatMessage
 import nest_asyncio
 from llama_index.readers.google import GmailReader
-# from llama_index.llms.azure_openai import AzureOpenAI
-# from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
+from llama_index.llms.azure_openai import AzureOpenAI
+from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
 
 logging.basicConfig(stream=sys.stdout, level=logging.ERROR)
 logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
@@ -115,7 +115,7 @@ def chat():
     )
 
     index = VectorStoreIndex.from_vector_store(vector_store)
-    query_engine = index.as_query_engine(llm=Settings.llm, similarity_top_k=3)
+    query_engine = index.as_chat_engine(llm=Settings.llm, similarity_top_k=3)
 
     # gmail_spec = GmailToolSpec()
     # gmail_agent = ReActAgent.from_tools(
