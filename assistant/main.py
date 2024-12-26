@@ -31,6 +31,8 @@ from llama_index.core.memory import (
 from llama_index.core.llms import ChatMessage
 import nest_asyncio
 from llama_index.readers.google import GmailReader
+# from llama_index.llms.azure_openai import AzureOpenAI
+# from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
 
 logging.basicConfig(stream=sys.stdout, level=logging.ERROR)
 logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
@@ -147,9 +149,10 @@ def chat():
         )
     )
 
+    context = "Your name is Alfred, your are my butler. I am Elie Khoury."
     tools = [date_engine, code_interpreter_engine, email_reader_engine]
     agent = ReActAgent.from_tools(
-        tools=tools, llm=Settings.llm, verbose=True, memory=composable_memory)
+        tools=tools, llm=Settings.llm, verbose=True, memory=composable_memory, context=context)
 
     command = input("Q: ")
     while (command != "exit"):
