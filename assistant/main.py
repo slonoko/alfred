@@ -84,6 +84,7 @@ def cli():
 @click.command()
 def scan_emails():
     # https://github.com/run-llama/llama-hub/tree/main/llama_hub/gmail
+    # https://pypi.org/project/llama-index-readers-google/
     gmail_reader = GmailReader(
         use_iterative_parser=True)
     emails = gmail_reader.load_data()
