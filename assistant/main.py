@@ -15,8 +15,6 @@ from llama_index.core.agent import ReActAgent
 from llama_index.core.tools import QueryEngineTool, ToolMetadata
 from llama_index.core import PromptTemplate
 import json;
-from llama_index.llms.azure_openai import AzureOpenAI
-from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader
 from llama_index.embeddings.ollama import OllamaEmbedding
 from tools.code_interpreter import CodeInterpreterToolSpec
@@ -40,27 +38,28 @@ logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
 
 nest_asyncio.apply()
 
-api_key = "xxx"
-azure_endpoint = "https://xxx.openai.azure.com/"
-api_version = "2024-05-01-preview"
+# api_key = "xxx"
+# azure_endpoint = "https://xxx.openai.azure.com/"
+# api_version = "2024-05-01-preview"
 
-llm = AzureOpenAI(
-    model="gpt-4o-mini",
-    deployment_name="gpt-4o-mini",
-    api_key=api_key,
-    azure_endpoint=azure_endpoint,
-    api_version=api_version,
-)
+# llm = AzureOpenAI(
+#     model="gpt-4o-mini",
+#     deployment_name="gpt-4o-mini",
+#     api_key=api_key,
+#     azure_endpoint=azure_endpoint,
+#     api_version=api_version,
+# )
 
-# You need to deploy your own embedding model as well as your own chat completion model
-embed_model = AzureOpenAIEmbedding(
-    model="text-embedding-ada-002",
-    deployment_name="text-embedding-ada-002",
-    api_key=api_key,
-    azure_endpoint=azure_endpoint,
-    api_version=api_version,
-)
- # "nomic-embed-text",
+# # You need to deploy your own embedding model as well as your own chat completion model
+# embed_model = AzureOpenAIEmbedding(
+#     model="text-embedding-ada-002",
+#     deployment_name="text-embedding-ada-002",
+#     api_key=api_key,
+#     azure_endpoint=azure_endpoint,
+#     api_version=api_version,
+# )
+
+# "nomic-embed-text" as alternative
 ollama_embedding = OllamaEmbedding(
     model_name= "bge-m3",
     base_url="http://localhost:11434"
@@ -149,7 +148,7 @@ def chat():
     )
 
     tools = [date_engine, code_interpreter_engine, email_reader_engine]
-    agent = AgentRunner.from_llm(
+    agent = ReActAgent.from_tools(
         tools=tools, llm=Settings.llm, verbose=True, memory=composable_memory)
 
     command = input("Q: ")
