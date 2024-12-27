@@ -33,7 +33,8 @@ import nest_asyncio
 from llama_index.readers.google import GmailReader
 from llama_index.llms.azure_openai import AzureOpenAI
 from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
-
+from llama_index.core.callbacks import CallbackManager
+from llama_index.callbacks.aim import AimCallback
 logging.basicConfig(stream=sys.stdout, level=logging.ERROR)
 logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
 
@@ -76,6 +77,8 @@ chroma_client = chromadb.HttpClient(host="localhost", port=8000)
 alfred_collection = chroma_client.get_or_create_collection("alfred")
 history_collection = chroma_client.get_or_create_collection("alfred_history")
 
+aim_callback = AimCallback(repo="/home/elie/Projects/alfred/aim")
+callback_manager = CallbackManager([aim_callback])
 
 @click.group()
 def cli():
@@ -86,8 +89,7 @@ def cli():
 def scan_emails():
     # https://github.com/run-llama/llama-hub/tree/main/llama_hub/gmail
     # https://pypi.org/project/llama-index-readers-google/
-    gmail_reader = GmailReader(
-        use_iterative_parser=True)
+    gmail_reader = GmailReader()
     emails = gmail_reader.load_data()
         
     vector_store = ChromaVectorStore(chroma_collection=alfred_collection)
@@ -114,8 +116,8 @@ def chat():
         secondary_memory_sources=[vector_memory],
     )
 
-    index = VectorStoreIndex.from_vector_store(vector_store)
-    query_engine = index.as_chat_engine(llm=Settings.llm, similarity_top_k=3)
+    index = VectorStoreIndex.from_vector_store(vector_store, callback_manager=callback_manager)
+    query_engine = index.as_query_engine(llm=Settings.llm, similarity_top_k=1)
 
     # gmail_spec = GmailToolSpec()
     # gmail_agent = ReActAgent.from_tools(
@@ -123,13 +125,13 @@ def chat():
     
     todays_info_spec = CurrentDateTimeToolSpec()
     todays_info_agent = ReActAgent.from_tools(
-        tools=todays_info_spec.to_tool_list(), llm=Settings.llm, verbose=True)
+        tools=todays_info_spec.to_tool_list(), llm=Settings.llm, verbose=True, callback_manager=callback_manager)
 
     code_interpreter_spec = CodeInterpreterToolSpec()
     code_interpreter_agent = ReActAgent.from_tools(
-        tools=code_interpreter_spec.to_tool_list(), llm=Settings.llm, verbose=True)
+        tools=code_interpreter_spec.to_tool_list(), llm=Settings.llm, verbose=True, callback_manager=callback_manager)
     
-    date_engine = QueryEngineTool(query_engine=todays_info_agent, metadata=ToolMetadata(
+    date_engine = QueryEngineTool(query_engine=todays_info_agent ,metadata=ToolMetadata(
             name="current_date_and_time",
             description="A function that returns the current date and time"
         )
@@ -152,7 +154,7 @@ def chat():
     context = "Your name is Alfred, your are my butler. I am Elie Khoury."
     tools = [date_engine, code_interpreter_engine, email_reader_engine]
     agent = ReActAgent.from_tools(
-        tools=tools, llm=Settings.llm, verbose=True, memory=composable_memory, context=context)
+        tools=tools, llm=Settings.llm, verbose=True, memory=composable_memory, context=context, callback_manager=callback_manager, max_iterations=25)
 
     command = input("Q: ")
     while (command != "exit"):

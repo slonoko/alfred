@@ -2,20 +2,25 @@
 
 import datetime
 from llama_index.core.tools.tool_spec.base import BaseToolSpec
-
+from zoneinfo import ZoneInfo
 
 class CurrentDateTimeToolSpec(BaseToolSpec):
     """Current date and time tool spec.
 
     """
 
-    spec_functions = ["current_date_and_time"]
+    spec_functions = ["current_date", "current_time"]
 
-    def current_date_and_time(self) -> str:
+    def current_date(self, format:str="%A, %B %d, %Y", timezone: str="localtime") -> str:
         """
-        A function that returns the current date and time.
-
-        The time is in GMT format. it is currently not possible to convert to another timezone.
-
+        A usefull function that takes as input the date format as optional parameter, the timezone with default to the system locale, and returns the current date.
         """
-        return f'Returns the current date is {datetime.datetime.now().strftime("%A, %B %d, %Y")}, and time {datetime.datetime.now().strftime("%H:%M:%S")}. make sure to answer the user and tell the user that this is GMT.'
+        tz=ZoneInfo(timezone)
+        return datetime.datetime.now(tz).strftime(format)
+
+    def current_time(self, format:str="%H:%M:%S", timezone: str="localtime") -> str:
+        """
+        A usefull function that takes as input the time format as optional parameter, the timezone with default to the system locale, and returns the time in the GMT timezone.
+        """
+        tz=ZoneInfo(timezone)
+        return datetime.datetime.now(tz).strftime(format)

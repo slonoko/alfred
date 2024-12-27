@@ -19,7 +19,7 @@ class CodeInterpreterToolSpec(BaseToolSpec):
 
     def code_interpreter(self, code: str):
         """
-        A function to execute python code, and return the stdout and stderr.
+        A function to execute python code, and return the stdout and stderr. Only use this tool if a computation is required.
 
         You should import any libraries that you wish to use. You have access to any libraries the user has installed.
 
