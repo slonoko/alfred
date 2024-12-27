@@ -35,6 +35,7 @@ from llama_index.llms.azure_openai import AzureOpenAI
 from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
 from llama_index.core.callbacks import CallbackManager
 from llama_index.callbacks.aim import AimCallback
+
 logging.basicConfig(stream=sys.stdout, level=logging.ERROR)
 logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
 
@@ -61,6 +62,60 @@ nest_asyncio.apply()
 #     azure_endpoint=azure_endpoint,
 #     api_version=api_version,
 # )
+
+react_system_header_str = """\
+
+Your name is Alfred, the personal assistant of Elie Khoury.
+You are designed to help with a variety of tasks, from answering questions to providing summaries to other types of analyses. You may use the tools provided in combination with your general knowledge.
+
+## Tools
+
+You have access to a wide variety of tools. You are responsible for using the tools in any sequence you deem appropriate to complete the task at hand.
+This may require breaking the task into subtasks and using different tools to complete each subtask, if necessary in combination with your general knowledge.
+
+You have access to the following tools:
+{tool_desc}
+
+
+## Output Format
+
+Please answer in the same language as the question and use the following format:
+
+```
+Thought: The current language of the user is: (user\'s language). I need to use a tool to help me answer the question.
+Action: tool name (one of {tool_names}) if using a tool.
+Action Input: the input to the tool, in a JSON format representing the kwargs (e.g. {{"input": "hello world", "num_beams": 5}})
+```
+
+Please ALWAYS start with a Thought.
+
+NEVER surround your response with markdown code markers. You may use code markers within your response if you need to.
+
+Please use a valid JSON format for the Action Input. Do NOT do this {{\'input\': \'hello world\', \'num_beams\': 5}}.
+
+If this format is used, the tool will respond in the following format:
+
+```
+Observation: tool response
+```
+
+You should keep repeating the above format till you have enough information to answer the question without using any more tools. At that point, you MUST respond in one of the following two formats:
+
+```
+Thought: I can answer without using any more tools. I\'ll use the user\'s language to answer
+Answer: [your answer here (In the same language as the user\'s question)]
+```
+
+```
+Thought: I cannot answer the question with the provided tools.
+Answer: [your answer here (In the same language as the user\'s question)]
+```
+
+## Current Conversation
+
+Below is the current conversation consisting of interleaving human and assistant messages.
+
+"""
 
 # "nomic-embed-text" as alternative
 ollama_embedding = OllamaEmbedding(
@@ -133,13 +188,13 @@ def chat():
     
     date_engine = QueryEngineTool(query_engine=todays_info_agent ,metadata=ToolMetadata(
             name="current_date_and_time",
-            description="A function that returns the current date and time"
+            description="A useful set of functions that return the current date and time. They take as input the format and the timezone."
         )
     )
 
     code_interpreter_engine = QueryEngineTool(query_engine=code_interpreter_agent, metadata=ToolMetadata(
             name="code_interpreter_in_python",
-            description="A function to execute python code, and return the stdout and stderr"
+            description="A useful function to execute python code, and return the stdout and stderr"
         )
     )
 
@@ -147,14 +202,16 @@ def chat():
         query_engine=query_engine,
         metadata=ToolMetadata(
             name="emails_database_retriever",
-            description="Primary tool to search through emails for information and answer questions. if results are found, make sure to answer the user"
+            description="A useful tool to search and query the emails of Elie Khoury."
         )
     )
 
-    context = "Your name is Alfred, your are my butler. I am Elie Khoury."
     tools = [date_engine, code_interpreter_engine, email_reader_engine]
     agent = ReActAgent.from_tools(
-        tools=tools, llm=Settings.llm, verbose=True, memory=composable_memory, context=context, callback_manager=callback_manager, max_iterations=25)
+        tools=tools, llm=Settings.llm, verbose=True, memory=composable_memory, callback_manager=callback_manager, max_iterations=25)
+
+    react_system_prompt = PromptTemplate(react_system_header_str)
+    agent.update_prompts({"agent_worker:system_prompt": react_system_prompt})
 
     command = input("Q: ")
     while (command != "exit"):
