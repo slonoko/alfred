@@ -30,7 +30,7 @@ from llama_index.core.memory import (
 )
 from llama_index.core.llms import ChatMessage
 import nest_asyncio
-from llama_index.readers.google import GmailReader
+from tools.gmail_reader import GmailReader
 from llama_index.llms.azure_openai import AzureOpenAI
 from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
 from llama_index.core.callbacks import CallbackManager
@@ -64,63 +64,9 @@ nest_asyncio.apply()
 #     api_version=api_version,
 # )
 
-react_system_header_str = """\
-
-Your name is Alfred, the personal assistant of Elie Khoury.
-You are designed to help with a variety of tasks, from answering questions to providing summaries to other types of analyses. You may use the tools provided in combination with your general knowledge.
-
-## Tools
-
-You have access to a wide variety of tools. You are responsible for using the tools in any sequence you deem appropriate to complete the task at hand.
-This may require breaking the task into subtasks and using different tools to complete each subtask, if necessary in combination with your general knowledge.
-
-You have access to the following tools:
-{tool_desc}
-
-
-## Output Format
-
-Please answer in the same language as the question and use the following format:
-
-```
-Thought: The current language of the user is: (user\'s language). I need to use a tool to help me answer the question.
-Action: tool name (one of {tool_names}) if using a tool.
-Action Input: the input to the tool, in a JSON format representing the kwargs (e.g. {{"input": "hello world", "num_beams": 5}})
-```
-
-Please ALWAYS start with a Thought.
-
-NEVER surround your response with markdown code markers. You may use code markers within your response if you need to.
-
-Please use a valid JSON format for the Action Input. Do NOT do this {{\'input\': \'hello world\', \'num_beams\': 5}}.
-
-If this format is used, the tool will respond in the following format:
-
-```
-Observation: tool response
-```
-
-You should keep repeating the above format till you have enough information to answer the question without using any more tools. At that point, you MUST respond in one of the following two formats:
-
-```
-Thought: I can answer without using any more tools. I\'ll use the user\'s language to answer
-Answer: [your answer here (In the same language as the user\'s question)]
-```
-
-```
-Thought: I cannot answer the question with the provided tools.
-Answer: [your answer here (In the same language as the user\'s question)]
-```
-
-## Current Conversation
-
-Below is the current conversation consisting of interleaving human and assistant messages.
-
-"""
-
 # "nomic-embed-text" as alternative
 ollama_embedding = OllamaEmbedding(
-    model_name= "bge-m3",
+    model_name= "mxbai-embed-large",
     base_url="http://localhost:11434"
 )
 
@@ -145,7 +91,7 @@ def cli():
 def scan_emails():
     # https://github.com/run-llama/llama-hub/tree/main/llama_hub/gmail
     # https://pypi.org/project/llama-index-readers-google/
-    gmail_reader = GmailReader()
+    gmail_reader = GmailReader(use_iterative_parser=True)
     emails = gmail_reader.load_data()
         
     vector_store = ChromaVectorStore(chroma_collection=alfred_collection)
@@ -222,8 +168,8 @@ def chat():
     agent = ReActAgent.from_tools(
         tools=tools, llm=Settings.llm, verbose=True, memory=composable_memory, callback_manager=callback_manager, max_iterations=25)
 
-    react_system_prompt = PromptTemplate(react_system_header_str)
-    agent.update_prompts({"agent_worker:system_prompt": react_system_prompt})
+    # react_system_prompt = PromptTemplate(react_system_header_str)
+    # agent.update_prompts({"agent_worker:system_prompt": react_system_prompt})
 
     command = input("Q: ")
     while (command != "exit"):
