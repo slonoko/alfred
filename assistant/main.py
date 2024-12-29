@@ -82,6 +82,26 @@ history_collection = chroma_client.get_or_create_collection("alfred_history")
 aim_callback = AimCallback(repo="/home/elie/Projects/alfred/aim")
 callback_manager = CallbackManager([aim_callback])
 
+def read_md_file(file_path):
+    """
+    Reads an MD file and returns its content.
+
+    Args:
+        file_path (str): The path to the MD file.
+
+    Returns:
+        str: The content of the MD file.
+    """
+
+    try:
+        with open(file_path, 'r') as file:
+            content = file.read()
+            return content
+    except FileNotFoundError:
+        print(f"File not found: {file_path}")
+        return None
+    
+
 @click.group()
 def cli():
     pass
@@ -168,8 +188,8 @@ def chat():
     agent = ReActAgent.from_tools(
         tools=tools, llm=Settings.llm, verbose=True, memory=composable_memory, callback_manager=callback_manager, max_iterations=25)
 
-    # react_system_prompt = PromptTemplate(react_system_header_str)
-    # agent.update_prompts({"agent_worker:system_prompt": react_system_prompt})
+    react_system_prompt = PromptTemplate(read_md_file(os.path.join(os.getcwd() ,'assistant/prompt.sys.MD')))
+    agent.update_prompts({"agent_worker:system_prompt": react_system_prompt})
 
     command = input("Q: ")
     while (command != "exit"):
