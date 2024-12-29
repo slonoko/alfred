@@ -186,11 +186,10 @@ def chat():
 
     tools = [date_engine, code_interpreter_engine, email_reader_engine, finance_engine]
     agent = ReActAgent.from_tools(
-        tools=tools, llm=Settings.llm, verbose=True, memory=composable_memory, callback_manager=callback_manager, max_iterations=25)
+        tools=tools, llm=Settings.llm, verbose=True, memory=composable_memory, callback_manager=callback_manager)
 
     react_system_prompt = PromptTemplate(read_md_file(os.path.join(os.getcwd() ,'assistant/prompt.sys.MD')))
     agent.update_prompts({"agent_worker:system_prompt": react_system_prompt})
-
     command = input("Q: ")
     while (command != "exit"):
         if (command=="new"):
