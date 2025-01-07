@@ -36,6 +36,7 @@ from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
 from llama_index.core.callbacks import CallbackManager
 from llama_index.callbacks.aim import AimCallback
 from llama_index.tools.yahoo_finance import YahooFinanceToolSpec
+from pydantic import BaseModel
 
 logging.basicConfig(stream=sys.stdout, level=logging.ERROR)
 logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
@@ -43,30 +44,30 @@ logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
 
 nest_asyncio.apply()
 
-# api_key = "xxx"
-# azure_endpoint = "https://xxx.openai.azure.com/"
-# api_version = "2024-05-01-preview"
+api_key = "xxx"
+azure_endpoint = "https://xxx.openai.azure.com/"
+api_version = "2024-05-01-preview"
 
-# azure_llm = AzureOpenAI(
-#     model="gpt-4o-mini",
-#     deployment_name="gpt-4o-mini",
-#     api_key=api_key,
-#     azure_endpoint=azure_endpoint,
-#     api_version=api_version,
-# )
+azure_llm = AzureOpenAI(
+    model="gpt-4o-mini",
+    deployment_name="gpt-4o-mini",
+    api_key=api_key,
+    azure_endpoint=azure_endpoint,
+    api_version=api_version,
+)
 
-# # You need to deploy your own embedding model as well as your own chat completion model
-# embed_model = AzureOpenAIEmbedding(
-#     model="text-embedding-ada-002",
-#     deployment_name="text-embedding-ada-002",
-#     api_key=api_key,
-#     azure_endpoint=azure_endpoint,
-#     api_version=api_version,
-# )
+# You need to deploy your own embedding model as well as your own chat completion model
+azure_embedding = AzureOpenAIEmbedding(
+    model="text-embedding-ada-002",
+    deployment_name="text-embedding-ada-002",
+    api_key=api_key,
+    azure_endpoint=azure_endpoint,
+    api_version=api_version,
+)
 
 # "nomic-embed-text" as alternative
 ollama_embedding = OllamaEmbedding(
-    model_name= "mxbai-embed-large",
+    model_name= "bge-m3",
     base_url="http://localhost:11434"
 )
 
@@ -159,7 +160,7 @@ def chat():
     
     date_engine = QueryEngineTool(query_engine=todays_info_agent ,metadata=ToolMetadata(
             name="current_date_and_time",
-            description="A useful set of functions that return the current date and time. They take as input the format and the timezone.",
+            description="A useful tool that return the current date and time. You may specify as input the format and timezone.",
             fn_schema=DatetimeToolFnSchema
         )
     )
@@ -169,10 +170,14 @@ def chat():
             description="A useful tool to exctract realtime financial information."
         )
     )
+    class CodeInterpreterToolFnSchema(BaseModel):
+        """Default tool function Schema."""
+        code: str
 
     code_interpreter_engine = QueryEngineTool(query_engine=code_interpreter_agent, metadata=ToolMetadata(
             name="code_interpreter_in_python",
-            description="A useful function to execute python code, and return the stdout and stderr"
+            description="A useful function to execute python code, and return the stdout and stderr",
+            fn_schema=CodeInterpreterToolFnSchema
         )
     )
 
@@ -189,7 +194,7 @@ def chat():
         tools=tools, llm=Settings.llm, verbose=True, memory=composable_memory, callback_manager=callback_manager)
 
     react_system_prompt = PromptTemplate(read_md_file(os.path.join(os.getcwd() ,'assistant/prompt.sys.MD')))
-    agent.update_prompts({"agent_worker:system_prompt": react_system_prompt})
+    #agent.update_prompts({"agent_worker:system_prompt": react_system_prompt})
     command = input("Q: ")
     while (command != "exit"):
         if (command=="new"):
