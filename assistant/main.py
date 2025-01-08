@@ -21,7 +21,6 @@ from llama_index.tools.code_interpreter import CodeInterpreterToolSpec
 from tools.date_time_retriever import CurrentDateTimeToolSpec, DatetimeToolFnSchema
 from llama_index.tools.vector_db.base import VectorDBToolSpec
 from llama_index.core.agent import AgentRunner
-from llama_index.agent.coa import CoAAgentWorker
 from llama_index.tools.google import GmailToolSpec
 from llama_index.core.memory import (
     VectorMemory,
@@ -80,7 +79,7 @@ chroma_client = chromadb.HttpClient(host="localhost", port=8000)
 alfred_collection = chroma_client.get_or_create_collection("alfred")
 history_collection = chroma_client.get_or_create_collection("alfred_history")
 
-aim_callback = AimCallback(repo="/home/elie/Projects/alfred/aim")
+aim_callback = AimCallback(repo="/home/elie/projects/alfred/aim")
 callback_manager = CallbackManager([aim_callback])
 
 def read_md_file(file_path):
@@ -185,7 +184,7 @@ def chat():
         query_engine=query_engine,
         metadata=ToolMetadata(
             name="emails_database_retriever",
-            description="A useful tool to search and query the emails of Elie Khoury."
+            description="A useful tool that accesses a database containing all emails of Elie Khoury. If the user asks about Elie Khoury, look in here first"
         )
     )
 
