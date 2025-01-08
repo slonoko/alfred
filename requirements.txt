@@ -1,6 +1,6 @@
 llama-index
 chromadb
-llama-index-vector-stores-chroma==0.1.5
+llama-index-vector-stores-chroma
 llama-index-core
 llama-index-llms-ollama
 llama-index-embeddings-huggingface
@@ -12,6 +12,10 @@ llama-index-tools-code-interpreter
 llama-index-tools-vector-db
 llama-parse
 llama-hub
+aim
 llama-index-readers-google
 llama-index-callbacks-aim
 llama-index-tools-yahoo-finance
+llama-index-llms-openai
+llama-index-llms-azure-openai
+llama-index-embeddings-azure-openai
