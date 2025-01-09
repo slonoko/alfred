@@ -61,13 +61,10 @@ ollama_embedding = OllamaEmbedding(
 ollama_llm = Ollama(model="llama3.1", base_url="http://localhost:11434", request_timeout=360.0)
 
 Settings.embed_model = ollama_embedding
-Settings.llm = azure_llm
+Settings.llm = ollama_llm
 
-aim_callback = AimCallback(repo="/home/elie/Projects/alfred/aim")
+aim_callback = AimCallback(repo="/home/elie/projects/alfred/aim")
 callback_manager = CallbackManager([aim_callback])
-
-vector_store = MilvusVectorStore(uri="http://localhost:19530", dim=1024, overwrite=True, collection_name="elie_emails")
-history_store = MilvusVectorStore(uri="http://localhost:19530", dim=1024, overwrite=False, collection_name="history")
 
 def read_md_file(file_path):
     try:
@@ -88,6 +85,9 @@ def cli():
 def scan_emails():
     # https://github.com/run-llama/llama-hub/tree/main/llama_hub/gmail
     # https://pypi.org/project/llama-index-readers-google/
+    vector_store = MilvusVectorStore(uri="http://localhost:19530", dim=1024, overwrite=True, collection_name="elie_emails")
+    history_store = MilvusVectorStore(uri="http://localhost:19530", dim=1024, overwrite=True, collection_name="history")
+
     gmail_reader = GmailReader(use_iterative_parser=True, max_results=100)
     emails = gmail_reader.load_data()
         
@@ -99,6 +99,9 @@ def scan_emails():
 
 @click.command()
 def chat():
+    vector_store = MilvusVectorStore(uri="http://localhost:19530", dim=1024, overwrite=False, collection_name="elie_emails")
+    history_store = MilvusVectorStore(uri="http://localhost:19530", dim=1024, overwrite=False, collection_name="history")
+
     vector_memory = VectorMemory.from_defaults(
         vector_store=history_store,  # leave as None to use default in-memory vector store
         embed_model=Settings.embed_model,
