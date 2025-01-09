@@ -23,6 +23,7 @@ from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
 from llama_index.core.callbacks import CallbackManager
 from llama_index.callbacks.aim import AimCallback
 from llama_index.tools.yahoo_finance import YahooFinanceToolSpec
+from llama_index.tools.wikipedia import WikipediaToolSpec
 import os
 from dotenv import load_dotenv
 
@@ -120,6 +121,7 @@ def chat():
     todays_info_spec = CurrentDateTimeToolSpec()
     finances_spec = YahooFinanceToolSpec()
     code_interpreter_spec = CodeInterpreterToolSpec()
+    wikipedia_spec = WikipediaToolSpec()
 
     email_reader_engine = QueryEngineTool(
         query_engine=query_engine,
@@ -133,10 +135,10 @@ def chat():
     tools.extend(todays_info_spec.to_tool_list())
     tools.extend(finances_spec.to_tool_list())
     tools.extend(code_interpreter_spec.to_tool_list())
+    tools.extend(wikipedia_spec.to_tool_list())
 
     agent = ReActAgent.from_tools(
         tools=tools, llm=Settings.llm, verbose=True, memory=composable_memory, callback_manager=callback_manager)
-
     #react_system_prompt = PromptTemplate(read_md_file(os.path.join(os.getcwd() ,'assistant/prompt.sys.MD')))
     #agent.update_prompts({"agent_worker:system_prompt": react_system_prompt})
 

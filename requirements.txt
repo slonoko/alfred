@@ -16,6 +16,7 @@ aim
 llama-index-readers-google
 llama-index-callbacks-aim
 llama-index-tools-yahoo-finance
+llama-index-tools-wikipedia
 llama-index-llms-openai
 llama-index-llms-azure-openai
 llama-index-embeddings-azure-openai
