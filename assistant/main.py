@@ -79,7 +79,7 @@ chroma_client = chromadb.HttpClient(host="localhost", port=8000)
 alfred_collection = chroma_client.get_or_create_collection("alfred")
 history_collection = chroma_client.get_or_create_collection("alfred_history")
 
-aim_callback = AimCallback(repo="/home/elie/projects/alfred/aim")
+aim_callback = AimCallback(repo="/home/elie/Projects/alfred/aim")
 callback_manager = CallbackManager([aim_callback])
 
 def read_md_file(file_path):
@@ -142,43 +142,9 @@ def chat():
     query_engine = index.as_query_engine(llm=Settings.llm, similarity_top_k=1)
 
     # gmail_spec = GmailToolSpec()
-    # gmail_agent = ReActAgent.from_tools(
-    #     tools=gmail_spec.to_tool_list(), llm=Settings.llm, verbose=True)
-    
     todays_info_spec = CurrentDateTimeToolSpec()
-    todays_info_agent = ReActAgent.from_tools(
-        tools=todays_info_spec.to_tool_list(), llm=Settings.llm, verbose=True, callback_manager=callback_manager)
-
     finances_spec = YahooFinanceToolSpec()
-    finances_agent = ReActAgent.from_tools(
-        tools=finances_spec.to_tool_list(), llm=Settings.llm, verbose=True, callback_manager=callback_manager)
-    
     code_interpreter_spec = CodeInterpreterToolSpec()
-    code_interpreter_agent = ReActAgent.from_tools(
-        tools=code_interpreter_spec.to_tool_list(), llm=Settings.llm, verbose=True, callback_manager=callback_manager)
-    
-    date_engine = QueryEngineTool(query_engine=todays_info_agent ,metadata=ToolMetadata(
-            name="current_date_and_time",
-            description="A useful tool that return the current date and time. You may specify as input the format and timezone.",
-            fn_schema=DatetimeToolFnSchema
-        )
-    )
-
-    finance_engine = QueryEngineTool(query_engine=finances_agent ,metadata=ToolMetadata(
-            name="yahoo_finances",
-            description="A useful tool to exctract realtime financial information."
-        )
-    )
-    class CodeInterpreterToolFnSchema(BaseModel):
-        """Default tool function Schema."""
-        code: str
-
-    code_interpreter_engine = QueryEngineTool(query_engine=code_interpreter_agent, metadata=ToolMetadata(
-            name="code_interpreter_in_python",
-            description="A useful function to execute python code, and return the stdout and stderr",
-            fn_schema=CodeInterpreterToolFnSchema
-        )
-    )
 
     email_reader_engine = QueryEngineTool(
         query_engine=query_engine,
@@ -188,12 +154,17 @@ def chat():
         )
     )
 
-    tools = [date_engine, code_interpreter_engine, email_reader_engine, finance_engine]
+    tools = [email_reader_engine]
+    tools.extend(todays_info_spec.to_tool_list())
+    tools.extend(finances_spec.to_tool_list())
+    tools.extend(code_interpreter_spec.to_tool_list())
+
     agent = ReActAgent.from_tools(
         tools=tools, llm=Settings.llm, verbose=True, memory=composable_memory, callback_manager=callback_manager)
 
-    react_system_prompt = PromptTemplate(read_md_file(os.path.join(os.getcwd() ,'assistant/prompt.sys.MD')))
+    #react_system_prompt = PromptTemplate(read_md_file(os.path.join(os.getcwd() ,'assistant/prompt.sys.MD')))
     #agent.update_prompts({"agent_worker:system_prompt": react_system_prompt})
+
     command = input("Q: ")
     while (command != "exit"):
         if (command=="new"):
