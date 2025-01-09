@@ -10,5 +10,5 @@ docker run -d -p 9099:9099  --network host -e PROTOCOL_BUFFERS_PYTHON_IMPLEMENTA
 
 docker run -d -p 8080:8080  --gpus all --network host -e OLLAMA_BASE_URL=http://localhost:11434 -v /home/elie/Projects/alfred/.chat:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:cuda
 
-docker run -d -p 43800:43800 --network host -v /home/elie/projects/alfred/aim/.aim:/opt/aim/.aim  --restart always aimstack/aim
+docker run -d -p 43800:43800 --network host -v /home/elie/Projects/alfred/aim/.aim:/opt/aim/.aim  --restart always aimstack/aim
 run aim init first locally.
