@@ -45,7 +45,7 @@ azure_llm = AzureOpenAI(
 )
 
 azure_embedding = AzureOpenAIEmbedding(
-    model="text-embedding-ada-002",
+    model="text-embedding-ada-002", # dim 1536
     deployment_name="text-embedding-ada-002",
     api_key=api_key,
     azure_endpoint=azure_endpoint,
@@ -54,20 +54,20 @@ azure_embedding = AzureOpenAIEmbedding(
 
 # "nomic-embed-text" as alternative
 ollama_embedding = OllamaEmbedding(
-    model_name= "bge-m3",
+    model_name= "bge-m3", # dim 1024
     base_url="http://localhost:11434"
 )
 
 ollama_llm = Ollama(model="llama3.1", base_url="http://localhost:11434", request_timeout=360.0)
 
-Settings.embed_model = azure_embedding
+Settings.embed_model = ollama_embedding
 Settings.llm = azure_llm
 
 aim_callback = AimCallback(repo="/home/elie/Projects/alfred/aim")
 callback_manager = CallbackManager([aim_callback])
 
-vector_store = MilvusVectorStore(uri="http://localhost:19530", dim=1536, overwrite=True, collection_name="elie_emails")
-history_store = MilvusVectorStore(uri="http://localhost:19530", dim=1536, overwrite=False, collection_name="history")
+vector_store = MilvusVectorStore(uri="http://localhost:19530", dim=1024, overwrite=True, collection_name="elie_emails")
+history_store = MilvusVectorStore(uri="http://localhost:19530", dim=1024, overwrite=False, collection_name="history")
 
 def read_md_file(file_path):
     try:
@@ -93,7 +93,7 @@ def scan_emails():
         
     storage_context = StorageContext.from_defaults(vector_store=vector_store)
     VectorStoreIndex.from_documents(
-        emails, storage_context=storage_context, embed_model=Settings.embed_model ,show_progress=True, use_async=True
+        emails, storage_context=storage_context, embed_model=Settings.embed_model ,show_progress=True, callback_manager=callback_manager
     )
 
 
