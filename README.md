@@ -12,3 +12,9 @@ docker run -d -p 8080:8080  --gpus all --network host -e OLLAMA_BASE_URL=http://
 
 docker run -d -p 43800:43800 --network host -v /home/elie/Projects/alfred/aim/.aim:/opt/aim/.aim  --restart always aimstack/aim
 run aim init first locally.
+
+create a .db folder and run his in it:
+
+curl -sfL https://raw.githubusercontent.com/milvus-io/milvus/master/scripts/standalone_embed.sh -o standalone_embed.sh
+
+bash standalone_embed.sh start

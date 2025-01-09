@@ -1,33 +1,21 @@
 from llama_index.core import VectorStoreIndex, Settings, StorageContext
-from llama_index.core.chat_engine.types import ChatMode
-from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.llms.ollama import Ollama
-from llama_index.vector_stores.chroma import ChromaVectorStore
-import chromadb
-import datetime
+from llama_index.vector_stores.milvus import MilvusVectorStore
 import click
 import logging
 import sys
-import os
-from llama_index.core.tools import FunctionTool
 from llama_index.core.agent import AgentChatResponse
 from llama_index.core.agent import ReActAgent
 from llama_index.core.tools import QueryEngineTool, ToolMetadata
-from llama_index.core import PromptTemplate
-import json;
-from llama_index.core import VectorStoreIndex, SimpleDirectoryReader
+from llama_index.core import VectorStoreIndex
 from llama_index.embeddings.ollama import OllamaEmbedding
 from llama_index.tools.code_interpreter import CodeInterpreterToolSpec
-from tools.date_time_retriever import CurrentDateTimeToolSpec, DatetimeToolFnSchema
-from llama_index.tools.vector_db.base import VectorDBToolSpec
-from llama_index.core.agent import AgentRunner
-from llama_index.tools.google import GmailToolSpec
+from tools.date_time_retriever import CurrentDateTimeToolSpec
 from llama_index.core.memory import (
     VectorMemory,
     SimpleComposableMemory,
     ChatMemoryBuffer,
 )
-from llama_index.core.llms import ChatMessage
 import nest_asyncio
 from tools.gmail_reader import GmailReader
 from llama_index.llms.azure_openai import AzureOpenAI
@@ -35,17 +23,18 @@ from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
 from llama_index.core.callbacks import CallbackManager
 from llama_index.callbacks.aim import AimCallback
 from llama_index.tools.yahoo_finance import YahooFinanceToolSpec
-from pydantic import BaseModel
+import os
+from dotenv import load_dotenv
 
 logging.basicConfig(stream=sys.stdout, level=logging.ERROR)
 logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
 
-
 nest_asyncio.apply()
+load_dotenv()
 
-api_key = "xxx"
-azure_endpoint = "https://xxx.openai.azure.com/"
-api_version = "2024-05-01-preview"
+api_key = os.getenv("azure_api_key")
+azure_endpoint = os.getenv("azure_endpoint")
+api_version = os.getenv("azure_api_version")
 
 azure_llm = AzureOpenAI(
     model="gpt-4o-mini",
@@ -55,7 +44,6 @@ azure_llm = AzureOpenAI(
     api_version=api_version,
 )
 
-# You need to deploy your own embedding model as well as your own chat completion model
 azure_embedding = AzureOpenAIEmbedding(
     model="text-embedding-ada-002",
     deployment_name="text-embedding-ada-002",
@@ -72,27 +60,16 @@ ollama_embedding = OllamaEmbedding(
 
 ollama_llm = Ollama(model="llama3.1", base_url="http://localhost:11434", request_timeout=360.0)
 
-Settings.embed_model = ollama_embedding
-Settings.llm = ollama_llm
-
-chroma_client = chromadb.HttpClient(host="localhost", port=8000)
-alfred_collection = chroma_client.get_or_create_collection("alfred")
-history_collection = chroma_client.get_or_create_collection("alfred_history")
+Settings.embed_model = azure_embedding
+Settings.llm = azure_llm
 
 aim_callback = AimCallback(repo="/home/elie/Projects/alfred/aim")
 callback_manager = CallbackManager([aim_callback])
 
+vector_store = MilvusVectorStore(uri="http://localhost:19530", dim=1536, overwrite=True, collection_name="elie_emails")
+history_store = MilvusVectorStore(uri="http://localhost:19530", dim=1536, overwrite=False, collection_name="history")
+
 def read_md_file(file_path):
-    """
-    Reads an MD file and returns its content.
-
-    Args:
-        file_path (str): The path to the MD file.
-
-    Returns:
-        str: The content of the MD file.
-    """
-
     try:
         with open(file_path, 'r') as file:
             content = file.read()
@@ -111,10 +88,9 @@ def cli():
 def scan_emails():
     # https://github.com/run-llama/llama-hub/tree/main/llama_hub/gmail
     # https://pypi.org/project/llama-index-readers-google/
-    gmail_reader = GmailReader(use_iterative_parser=True)
+    gmail_reader = GmailReader(use_iterative_parser=True, max_results=100)
     emails = gmail_reader.load_data()
         
-    vector_store = ChromaVectorStore(chroma_collection=alfred_collection)
     storage_context = StorageContext.from_defaults(vector_store=vector_store)
     VectorStoreIndex.from_documents(
         emails, storage_context=storage_context, embed_model=Settings.embed_model ,show_progress=True, use_async=True
@@ -123,11 +99,8 @@ def scan_emails():
 
 @click.command()
 def chat():
-    vector_store = ChromaVectorStore(chroma_collection=alfred_collection)
-    history_store = ChromaVectorStore(chroma_collection=history_collection)
-
     vector_memory = VectorMemory.from_defaults(
-        vector_store=None,  # leave as None to use default in-memory vector store
+        vector_store=history_store,  # leave as None to use default in-memory vector store
         embed_model=Settings.embed_model,
         retriever_kwargs={"similarity_top_k": 1},
     )   
@@ -141,7 +114,6 @@ def chat():
     index = VectorStoreIndex.from_vector_store(vector_store, callback_manager=callback_manager)
     query_engine = index.as_query_engine(llm=Settings.llm, similarity_top_k=1)
 
-    # gmail_spec = GmailToolSpec()
     todays_info_spec = CurrentDateTimeToolSpec()
     finances_spec = YahooFinanceToolSpec()
     code_interpreter_spec = CodeInterpreterToolSpec()
@@ -149,7 +121,7 @@ def chat():
     email_reader_engine = QueryEngineTool(
         query_engine=query_engine,
         metadata=ToolMetadata(
-            name="emails_database_retriever",
+            name="elie_khoury_emails_database",
             description="A useful tool that accesses a database containing all emails of Elie Khoury. If the user asks about Elie Khoury, look in here first"
         )
     )
