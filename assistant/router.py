@@ -26,6 +26,8 @@ from llama_index.tools.yahoo_finance import YahooFinanceToolSpec
 from llama_index.tools.wikipedia import WikipediaToolSpec
 import os
 from dotenv import load_dotenv
+from llama_index.core.query_engine import RouterQueryEngine
+from llama_index.core.selectors import LLMSingleSelector, LLMMultiSelector
 
 logging.basicConfig(stream=sys.stdout, level=logging.ERROR)
 logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
@@ -59,7 +61,7 @@ ollama_embedding = OllamaEmbedding(
     base_url="http://localhost:11434"
 )
 
-ollama_llm = Ollama(model="llama3.2", base_url="http://localhost:11434", request_timeout=360.0)
+ollama_llm = Ollama(model="llama3.1", base_url="http://localhost:11434", request_timeout=360.0)
 
 Settings.embed_model = ollama_embedding
 Settings.llm = ollama_llm
@@ -100,8 +102,8 @@ def scan_emails():
 
 @click.command()
 def chat():
-    vector_store = MilvusVectorStore(uri="http://localhost:19530", dim=1024, overwrite=False, collection_name="elie_emails")
-    history_store = MilvusVectorStore(uri="http://localhost:19530", dim=1024, overwrite=False, collection_name="history")
+    vector_store = MilvusVectorStore(uri="http://localhost:19530", dim=1024, overwrite=True, collection_name="elie_emails")
+    history_store = MilvusVectorStore(uri="http://localhost:19530", dim=1024, overwrite=True, collection_name="history")
 
     vector_memory = VectorMemory.from_defaults(
         vector_store=history_store,  # leave as None to use default in-memory vector store
@@ -131,14 +133,45 @@ def chat():
         )
     )
 
-    tools = [email_reader_engine]
+    tools = []
     tools.extend(todays_info_spec.to_tool_list())
     tools.extend(finances_spec.to_tool_list())
     tools.extend(code_interpreter_spec.to_tool_list())
     tools.extend(wikipedia_spec.to_tool_list())
 
-    agent = ReActAgent.from_tools(
+    tools_agent = ReActAgent.from_tools(
         tools=tools, llm=Settings.llm, verbose=True, memory=composable_memory, callback_manager=callback_manager)
+    
+    tool_engine = QueryEngineTool(
+        query_engine=tools_agent,
+        metadata=ToolMetadata(
+            name="tool_engine",
+            description="A useful set of tool that provide access to code interpreter, yahoo finance, wikipedia and current date and time"
+        )
+    )
+    
+    generalknowledge_agent = ReActAgent.from_tools(
+        tools=[], llm=Settings.llm, verbose=True, memory=composable_memory, callback_manager=callback_manager)
+    
+    generalknowledge_engine = QueryEngineTool(
+        query_engine=generalknowledge_agent,
+        metadata=ToolMetadata(
+            name="generalknowledge_engine",
+            description="A useful agent that provide only general knowledge information and cannot access any tool"
+        )
+    )
+    
+    agent = RouterQueryEngine(
+        selector=LLMMultiSelector.from_defaults(llm=Settings.llm),
+        query_engine_tools=[
+            email_reader_engine,
+            tool_engine,
+            generalknowledge_engine
+        ],
+        llm=Settings.llm,
+        verbose=True
+    )
+
     #react_system_prompt = PromptTemplate(read_md_file(os.path.join(os.getcwd() ,'assistant/prompt.sys.MD')))
     #agent.update_prompts({"agent_worker:system_prompt": react_system_prompt})
 
@@ -147,7 +180,7 @@ def chat():
         if (command=="new"):
             agent.reset()
         else:
-            response:AgentChatResponse = agent.chat(command)
+            response:AgentChatResponse = agent.query(command)
             print(response)
         command = input("Q: ")
 
