@@ -22,3 +22,5 @@ llama-index-llms-azure-openai
 llama-index-embeddings-azure-openai
 llama-index-vector-stores-milvus
 pymilvus>=2.4.2
+setuptools
+build
