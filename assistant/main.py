@@ -1,4 +1,4 @@
-from llama_index.core import VectorStoreIndex, Settings, StorageContext
+from llama_index.core import VectorStoreIndex, Settings, StorageContext, PromptTemplate
 from llama_index.llms.ollama import Ollama
 from llama_index.vector_stores.milvus import MilvusVectorStore
 import click
@@ -59,7 +59,7 @@ ollama_embedding = OllamaEmbedding(
     base_url="http://localhost:11434"
 )
 
-ollama_llm = Ollama(model="llama3.2", base_url="http://localhost:11434", request_timeout=360.0)
+ollama_llm = Ollama(model="llama3.1", base_url="http://localhost:11434", request_timeout=360.0)
 
 Settings.embed_model = ollama_embedding
 Settings.llm = ollama_llm
@@ -97,6 +97,60 @@ def scan_emails():
         emails, storage_context=storage_context, embed_model=Settings.embed_model ,show_progress=True, callback_manager=callback_manager
     )
 
+def chat_onshot(agent):
+    command = input(">> Human: ")
+    while (command != "exit"):
+        if (command=="new"):
+            agent.reset()
+        else:
+            response = agent.chat(command)
+            print(f'Agent: {response}')
+        command = input(">> Human: ")
+
+def chat_repl(agent, exit_when_done: bool = True):
+    """Chat REPL.
+
+    Args:
+        exit_when_done(bool): if True, automatically exit when step is finished.
+            Set to False if you want to keep going even if step is marked as finished by the agent.
+            If False, you need to explicitly call "exit" to finalize a task execution.
+
+    """
+    task_message = None
+    while task_message != "exit":
+        task_message = input(">> Human: ")
+        if task_message == "exit":
+            break
+
+        task = agent.create_task(task_message)
+
+        response = None
+        step_output = None
+        message = None
+        while message != "exit":
+            if message is None or message == "":
+                step_output = agent.run_step(task.task_id)
+            else:
+                step_output = agent.run_step(task.task_id, input=message)
+            if exit_when_done and step_output.is_last:
+                print(
+                    ">> Task marked as finished by the agent, executing task execution."
+                )
+                break
+
+            message = input(
+                ">> Add feedback during step? (press enter/leave blank to continue, and type 'exit' to stop): "
+            )
+            if message == "exit":
+                break
+
+        if step_output is None:
+            print(">> You haven't run the agent. Task is discarded.")
+        elif not step_output.is_last:
+            print(">> The agent hasn't finished yet. Task is discarded.")
+        else:
+            response = agent.finalize_response(task.task_id)
+        print(f"Agent: {str(response)}")
 
 @click.command()
 def chat():
@@ -132,24 +186,19 @@ def chat():
     )
 
     tools = [email_reader_engine]
-    tools.extend(todays_info_spec.to_tool_list())
-    tools.extend(finances_spec.to_tool_list())
+    #tools.extend(todays_info_spec.to_tool_list())
+    #tools.extend(finances_spec.to_tool_list())
     tools.extend(code_interpreter_spec.to_tool_list())
-    tools.extend(wikipedia_spec.to_tool_list())
+    #tools.extend(wikipedia_spec.to_tool_list())
 
     agent = ReActAgent.from_tools(
-        tools=tools, llm=Settings.llm, verbose=True, memory=composable_memory, callback_manager=callback_manager)
-    #react_system_prompt = PromptTemplate(read_md_file(os.path.join(os.getcwd() ,'assistant/prompt.sys.MD')))
+        tools=tools, llm=Settings.llm, verbose=True, memory=composable_memory, callback_manager=callback_manager, max_iterations=20)
+    
+    react_system_prompt = PromptTemplate(read_md_file(os.path.join(os.getcwd() ,'assistant/prompts/prompt.sys.MD')))
     #agent.update_prompts({"agent_worker:system_prompt": react_system_prompt})
 
-    command = input("Q: ")
-    while (command != "exit"):
-        if (command=="new"):
-            agent.reset()
-        else:
-            response:AgentChatResponse = agent.chat(command)
-            print(response)
-        command = input("Q: ")
+    #chat_repl(agent, True)
+    chat_onshot(agent)
 
 
 cli.add_command(scan_emails)
