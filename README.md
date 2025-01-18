@@ -1,3 +1,7 @@
+# Alfred - Personal Assistant
+
+Alfred is a personal assistant designed to help with a variety of tasks, from answering questions to providing summaries to other types of analyses.
+
 ## Prerequisites
 
 - Python 3.8 or higher
