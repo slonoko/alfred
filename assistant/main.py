@@ -42,6 +42,7 @@ AZURE_LLM_MODEL = "gpt-4o-mini"
 AZURE_EMBED_MODEL = "text-embedding-ada-002"
 MILVUS_URI = "http://localhost:19530"
 OLLAMA_URL = "http://localhost:11434"
+MODEL_NAME = "llama3.1"
 
 # Retrieve environment variables with error handling
 api_key = os.getenv("azure_api_key")
@@ -74,7 +75,7 @@ ollama_embedding = OllamaEmbedding(
     base_url=OLLAMA_URL
 )
 
-ollama_llm = Ollama(model="llama3.1", base_url=OLLAMA_URL, request_timeout=360.0)
+ollama_llm = Ollama(model=MODEL_NAME, base_url=OLLAMA_URL, request_timeout=360.0)
 
 Settings.embed_model = ollama_embedding
 Settings.llm = ollama_llm
@@ -123,14 +124,14 @@ def prepare_chat():
         )
     )
 
-    tools = [email_reader_engine]
-    tools.extend(todays_info_spec.to_tool_list())
-    tools.extend(finances_spec.to_tool_list())
-    tools.extend(code_interpreter_spec.to_tool_list())
-    tools.extend(wikipedia_spec.to_tool_list())
+    # tools = [email_reader_engine]
+    # tools.extend(todays_info_spec.to_tool_list())
+    # tools.extend(finances_spec.to_tool_list())
+    # tools.extend(code_interpreter_spec.to_tool_list())
+    # tools.extend(wikipedia_spec.to_tool_list())
 
     agent = ReActAgent.from_tools(
-        tools=tools, llm=Settings.llm, verbose=True, memory=composable_memory, callback_manager=callback_manager, max_iterations=20)
+        tools=code_interpreter_spec.to_tool_list(), llm=Settings.llm, verbose=True, memory=composable_memory, callback_manager=callback_manager, max_iterations=20)
     
     react_system_prompt = PromptTemplate(read_md_file(os.path.join(os.getcwd() ,'assistant/prompts/prompt.sys.MD')))
     #agent.update_prompts({"agent_worker:system_prompt": react_system_prompt})
