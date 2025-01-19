@@ -124,14 +124,14 @@ def prepare_chat():
         )
     )
 
-    # tools = [email_reader_engine]
-    # tools.extend(todays_info_spec.to_tool_list())
-    # tools.extend(finances_spec.to_tool_list())
-    # tools.extend(code_interpreter_spec.to_tool_list())
-    # tools.extend(wikipedia_spec.to_tool_list())
+    tools = [email_reader_engine]
+    tools.extend(todays_info_spec.to_tool_list())
+    tools.extend(finances_spec.to_tool_list())
+    tools.extend(code_interpreter_spec.to_tool_list())
+    tools.extend(wikipedia_spec.to_tool_list())
 
     agent = ReActAgent.from_tools(
-        tools=code_interpreter_spec.to_tool_list(), llm=Settings.llm, verbose=True, memory=composable_memory, callback_manager=callback_manager, max_iterations=20)
+        tools=tools, llm=Settings.llm, verbose=True, memory=composable_memory, callback_manager=callback_manager, max_iterations=20)
     
     react_system_prompt = PromptTemplate(read_md_file(os.path.join(os.getcwd() ,'assistant/prompts/prompt.sys.MD')))
     #agent.update_prompts({"agent_worker:system_prompt": react_system_prompt})
