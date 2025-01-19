@@ -9,7 +9,7 @@ from llama_index.core.agent import ReActAgent
 from llama_index.core.tools import QueryEngineTool, ToolMetadata
 from llama_index.core import VectorStoreIndex
 from llama_index.embeddings.ollama import OllamaEmbedding
-from llama_index.tools.code_interpreter import CodeInterpreterToolSpec
+from tools.code_interpreter import CodeInterpreterToolSpec
 from tools.date_time_retriever import CurrentDateTimeToolSpec
 from llama_index.core.memory import (
     VectorMemory,
