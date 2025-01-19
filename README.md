@@ -8,7 +8,7 @@ Alfred is a personal assistant designed to help with a variety of tasks, from an
 - `conda` (Anaconda or Miniconda)
 - Docker and Docker Compose
 - NVIDIA GPU with CUDA support (recommended)
-- NVIDIA Container Toolkit for Docker
+- [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html#installing-with-apt) for Docker
 
 ## Setup
 
@@ -38,13 +38,7 @@ Alfred is a personal assistant designed to help with a variety of tasks, from an
     python -m build
     ```
 
-5. **Install the built package:**
-
-    ```sh
-    pip install dist/*.whl
-    ```
-
-6. **Set up environment variables:**
+5. **Set up environment variables:**
 
     Create a [`.env`](.env ) file in the root directory and add the following variables:
 
@@ -54,7 +48,7 @@ Alfred is a personal assistant designed to help with a variety of tasks, from an
     azure_api_version=<your_azure_api_version>
     ```
 
-7. **Install Required Docker Services:**
+6. **Install Required Docker Services:**
 
     a. **Install Ollama:**
     ```sh
@@ -69,6 +63,8 @@ Alfred is a personal assistant designed to help with a variety of tasks, from an
     b. **Install Aim:**
     ```sh
     # First initialize Aim locally
+    mkdir aim
+    cd aim
     aim init
 
     docker run -d -p 0.0.0.0:43800:43800 --network host \
@@ -91,7 +87,7 @@ Alfred is a personal assistant designed to help with a variety of tasks, from an
     bash standalone_embed.sh start
     ```
 
-8. **Optional: Install Chroma**
+7. **Optional: Install Chroma**
 
     ```sh
     docker run -d -p 8000:8000 --network host \
@@ -101,7 +97,7 @@ Alfred is a personal assistant designed to help with a variety of tasks, from an
       chromadb/chroma
     ```
 
-9. **Optional: Install Open WebUI**
+8. **Optional: Install Open WebUI**
 
     ```sh
     docker run -d -p 8080:8080 --gpus all --network host \
