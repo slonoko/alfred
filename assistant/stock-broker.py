@@ -10,7 +10,6 @@ from llama_index.embeddings.ollama import OllamaEmbedding
 from llama_index.llms.azure_openai import AzureOpenAI
 from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
 from llama_index.core.callbacks import CallbackManager
-from llama_index.callbacks.aim import AimCallback
 from llama_index.tools.yahoo_finance import YahooFinanceToolSpec
 from tools.exchange_rate import ExchangeRateTool
 from llama_index.core.agent.workflow import (
@@ -78,9 +77,6 @@ ollama_llm = Ollama(model=MODEL_NAME, base_url=OLLAMA_URL, request_timeout=360.0
 
 Settings.embed_model = ollama_embedding
 Settings.llm = ollama_llm
-
-aim_callback = AimCallback(repo="aim")
-callback_manager = CallbackManager([aim_callback])
 
 def read_md_file(file_path):
     try:

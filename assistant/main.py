@@ -21,7 +21,6 @@ from tools.gmail_reader import GmailReader
 from llama_index.llms.azure_openai import AzureOpenAI
 from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
 from llama_index.core.callbacks import CallbackManager
-from llama_index.callbacks.aim import AimCallback
 from llama_index.tools.yahoo_finance import YahooFinanceToolSpec
 from llama_index.tools.wikipedia import WikipediaToolSpec
 import os
@@ -80,9 +79,6 @@ ollama_llm = Ollama(model=MODEL_NAME, base_url=OLLAMA_URL, request_timeout=360.0
 Settings.embed_model = ollama_embedding
 Settings.llm = ollama_llm
 
-aim_callback = AimCallback(repo="aim")
-callback_manager = CallbackManager([aim_callback])
-
 def read_md_file(file_path):
     try:
         with open(file_path, 'r') as file:
@@ -108,7 +104,7 @@ def prepare_chat():
         secondary_memory_sources=[vector_memory],
     )
 
-    index = VectorStoreIndex.from_vector_store(vector_store, callback_manager=callback_manager)
+    index = VectorStoreIndex.from_vector_store(vector_store)
     query_engine = index.as_query_engine(llm=Settings.llm, similarity_top_k=1)
 
     todays_info_spec = CurrentDateTimeToolSpec()
@@ -131,7 +127,7 @@ def prepare_chat():
     tools.extend(wikipedia_spec.to_tool_list())
 
     agent = ReActAgent.from_tools(
-        tools=tools, llm=Settings.llm, verbose=True, memory=composable_memory, callback_manager=callback_manager, max_iterations=20)
+        tools=tools, llm=Settings.llm, verbose=True, memory=composable_memory, max_iterations=20)
     
     react_system_prompt = PromptTemplate(read_md_file(os.path.join(os.getcwd() ,'assistant/prompts/prompt.sys.MD')))
     #agent.update_prompts({"agent_worker:system_prompt": react_system_prompt})
@@ -155,7 +151,7 @@ def scan_emails():
         
     storage_context = StorageContext.from_defaults(vector_store=vector_store)
     VectorStoreIndex.from_documents(
-        emails, storage_context=storage_context, embed_model=Settings.embed_model ,show_progress=True, callback_manager=callback_manager
+        emails, storage_context=storage_context, embed_model=Settings.embed_model ,show_progress=True
     )
 
 @click.command()

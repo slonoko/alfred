@@ -68,7 +68,7 @@ Alfred is a personal assistant designed to help with a variety of tasks, from an
     aim init
 
     docker run -d -p 0.0.0.0:43800:43800 --network host \
-      -v <project_path>/alfred/aim/.aim:/opt/aim/.aim \
+      -v $pwd/aim/.aim:/opt/aim/.aim \
       --restart always \
       --name aim \
       aimstack/aim
