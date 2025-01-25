@@ -31,7 +31,7 @@ AZURE_LLM_MODEL = "gpt-4o-mini"
 AZURE_EMBED_MODEL = "text-embedding-ada-002"
 MILVUS_URI = "http://localhost:19530"
 OLLAMA_URL = "http://localhost:11434"
-MODEL_NAME = "llama3.2:3b-instruct-fp16"
+MODEL_NAME = "llama3.1"
 
 # Retrieve environment variables with error handling
 api_key = os.getenv("azure_api_key")
@@ -67,7 +67,7 @@ ollama_embedding = OllamaEmbedding(
 ollama_llm = Ollama(model=MODEL_NAME, base_url=OLLAMA_URL, request_timeout=360.0)
 
 Settings.embed_model = ollama_embedding
-Settings.llm = azure_llm
+Settings.llm = ollama_llm
 
 aim_callback = AimCallback(repo="aim")
 callback_manager = CallbackManager([aim_callback])
@@ -91,7 +91,7 @@ def prepare_chat():
 
     prompt = read_md_file(os.path.join(os.getcwd() ,'assistant/prompts/trader_prompt.MD'))
     agent = AgentWorkflow.from_tools_or_functions (
-        tools_or_functions=tools, llm=Settings.llm, system_prompt=prompt)
+        tools_or_functions=finances_spec.to_tool_list(), llm=Settings.llm, system_prompt=prompt)
     
     return agent  
 
