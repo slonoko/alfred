@@ -10,8 +10,7 @@ from llama_index.embeddings.ollama import OllamaEmbedding
 from llama_index.llms.azure_openai import AzureOpenAI
 from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
 from llama_index.core.callbacks import CallbackManager
-from llama_index.callbacks.aim import AimCallback
-from llama_index.tools.yahoo_finance import YahooFinanceToolSpec
+from tools.flight_assistant import FlightAssistantTool
 from tools.exchange_rate import ExchangeRateTool
 from llama_index.core.agent.workflow import (
     AgentWorkflow,
@@ -77,10 +76,7 @@ ollama_embedding = OllamaEmbedding(
 ollama_llm = Ollama(model=MODEL_NAME, base_url=OLLAMA_URL, request_timeout=360.0)
 
 Settings.embed_model = ollama_embedding
-Settings.llm = ollama_llm
-
-aim_callback = AimCallback(repo="aim")
-callback_manager = CallbackManager([aim_callback])
+Settings.llm = azure_llm
 
 def read_md_file(file_path):
     try:
@@ -92,23 +88,23 @@ def read_md_file(file_path):
         return None
 
 def prepare_chat():
-    finances_spec = YahooFinanceToolSpec()
+    flight_tool = FlightAssistantTool()
     exchange_rate_spec = ExchangeRateTool()
     tools = []
-    tools.extend(finances_spec.to_tool_list())
+    tools.extend(flight_tool.to_tool_list())
     tools.extend(exchange_rate_spec.to_tool_list())
 
-    prompt = read_md_file(os.path.join(os.getcwd() ,'assistant/prompts/trader_prompt.MD'))
+    prompt = read_md_file(os.path.join(os.getcwd() ,'assistant/prompts/flightassistant_prompt.MD'))
 
     broker_agent = ReActAgent(
-        name="broker",
-        description="Performs stock related operations",
+        name="flightassistant",
+        description="Perform flight search and exchange rate conversion",
         system_prompt=prompt,
         tools=tools,
         llm=Settings.llm,
     )
 
-    agent = AgentWorkflow(agents=[broker_agent], root_agent="broker")
+    agent = AgentWorkflow(agents=[broker_agent], root_agent="flightassistant")
     
     return agent  
 
