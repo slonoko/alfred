@@ -26,7 +26,7 @@ from llama_index.core.tools import FunctionTool
 from llama_index.core import Settings
 
 # Logging configuration
-logging.basicConfig(stream=sys.stdout, level=logging.ERROR)
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
 
 # Apply nest_asyncio
