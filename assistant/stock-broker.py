@@ -12,8 +12,18 @@ from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
 from llama_index.core.callbacks import CallbackManager
 from llama_index.callbacks.aim import AimCallback
 from llama_index.tools.yahoo_finance import YahooFinanceToolSpec
-from tools.date_time_retriever import CurrentDateTimeToolSpec
-from llama_index.core.agent.workflow import AgentWorkflow
+from tools.exchange_rate import ExchangeRateTool
+from llama_index.core.agent.workflow import (
+    AgentWorkflow,
+    ReActAgent,
+    FunctionAgent,
+    AgentStream,
+    AgentInput,
+    AgentOutput,
+    ToolCall,
+    ToolCallResult
+)
+from llama_index.core.tools import FunctionTool
 from llama_index.core import Settings
 
 # Logging configuration
@@ -82,54 +92,55 @@ def read_md_file(file_path):
         return None
 
 def prepare_chat():
-    todays_info_spec = CurrentDateTimeToolSpec()
     finances_spec = YahooFinanceToolSpec()
-
+    exchange_rate_spec = ExchangeRateTool()
     tools = []
-    tools.extend(todays_info_spec.to_tool_list())
     tools.extend(finances_spec.to_tool_list())
+    tools.extend(exchange_rate_spec.to_tool_list())
 
     prompt = read_md_file(os.path.join(os.getcwd() ,'assistant/prompts/trader_prompt.MD'))
-    agent = AgentWorkflow.from_tools_or_functions (
-        tools_or_functions=finances_spec.to_tool_list(), llm=Settings.llm, system_prompt=prompt)
+
+    broker_agent = ReActAgent(
+        name="broker",
+        description="Performs stock related operations",
+        system_prompt=prompt,
+        tools=tools,
+        llm=Settings.llm,
+    )
+
+    agent = AgentWorkflow(agents=[broker_agent], root_agent="broker")
     
     return agent  
 
-async def run_command():
-    agent = prepare_chat()
-    command = input(">> Human: ")
-    response = await agent.run(command, verbose=True)
-    print(f'Agent: {response}')
-
-async def run_command_alt(question:str=None):
+async def run_command(question:str=None):
     workflow = prepare_chat()
     handler = await workflow.run(user_msg=question)
     print(str(handler)) 
     # async for event in handler.stream_events():
     #     if isinstance(event, AgentStream):
-            # print(event.delta, end="", flush=True)
-            # print(event.response)  # the current full response
-            # print(event.raw)  # the raw llm api response
-            # print(event.current_agent_name)  # the current agent name
-        # elif isinstance(event, AgentInput):
-        #    print(event.input)  # the current input messages
-        #    print(event.current_agent_name)  # the current agent name
-        # elif isinstance(event, AgentOutput):
-        #    print(event.response)  # the current full response
-        #    print(event.tool_calls)  # the selected tool calls, if any
-        #    print(event.raw)  # the raw llm api response
-        # elif isinstance(event, ToolCallResult):
-        #    print(event.tool_name)  # the tool name
-        #    print(event.tool_kwargs)  # the tool kwargs
-        #    print(event.tool_output)  # the tool output
-        # elif isinstance(event, ToolCall):
-        #     print(event.tool_name)  # the tool name
-        #     print(event.tool_kwargs)  # the tool kwargs
+    #         print(event.delta, end="", flush=True)
+    #         print(event.response)  # the current full response
+    #         print(event.raw)  # the raw llm api response
+    #         print(event.current_agent_name)  # the current agent name
+    #     elif isinstance(event, AgentInput):
+    #        print(event.input)  # the current input messages
+    #        print(event.current_agent_name)  # the current agent name
+    #     elif isinstance(event, AgentOutput):
+    #        print(event.response)  # the current full response
+    #        print(event.tool_calls)  # the selected tool calls, if any
+    #        print(event.raw)  # the raw llm api response
+    #     elif isinstance(event, ToolCallResult):
+    #        print(event.tool_name)  # the tool name
+    #        print(event.tool_kwargs)  # the tool kwargs
+    #        print(event.tool_output)  # the tool output
+    #     elif isinstance(event, ToolCall):
+    #         print(event.tool_name)  # the tool name
+    #         print(event.tool_kwargs)  # the tool kwargs
 
 @click.command()
 @click.argument('question')
 def ask(question:str):
-    asyncio.run(run_command_alt(question))
+    asyncio.run(run_command(question))
 
 if __name__ == "__main__":
     ask()
