@@ -28,7 +28,7 @@ class BaseAgent:
         self.ollama_llm, self.ollama_embedding, _ = initialize_ollama_services()
 
         Settings.embed_model = self.ollama_embedding
-        Settings.llm = self.azure_llm
+        Settings.llm = self.ollama_llm
 
         self.prompt = read_md_file(os.path.join(os.getcwd(), prompt_file))
 
