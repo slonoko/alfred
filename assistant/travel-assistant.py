@@ -1,3 +1,5 @@
+import json
+import pickle
 import click
 import logging
 import sys
@@ -21,6 +23,11 @@ from llama_index.core.agent.workflow import (
     AgentOutput,
     ToolCall,
     ToolCallResult
+)
+from llama_index.core.workflow import (
+    Context,
+    JsonSerializer,
+    JsonPickleSerializer,
 )
 from llama_index.core.tools import FunctionTool
 from llama_index.core import Settings
@@ -110,29 +117,23 @@ def prepare_chat():
 
 async def run_command(question:str=None):
     workflow = prepare_chat()
-    handler = await workflow.run(user_msg=question)
-    print(str(handler)) 
-    # async for event in handler.stream_events():
-    #     if isinstance(event, AgentStream):
-    #         print(event.delta, end="", flush=True)
-    #         print(event.response)  # the current full response
-    #         print(event.raw)  # the raw llm api response
-    #         print(event.current_agent_name)  # the current agent name
-    #     elif isinstance(event, AgentInput):
-    #        print(event.input)  # the current input messages
-    #        print(event.current_agent_name)  # the current agent name
-    #     elif isinstance(event, AgentOutput):
-    #        print(event.response)  # the current full response
-    #        print(event.tool_calls)  # the selected tool calls, if any
-    #        print(event.raw)  # the raw llm api response
-    #     elif isinstance(event, ToolCallResult):
-    #        print(event.tool_name)  # the tool name
-    #        print(event.tool_kwargs)  # the tool kwargs
-    #        print(event.tool_output)  # the tool output
-    #     elif isinstance(event, ToolCall):
-    #         print(event.tool_name)  # the tool name
-    #         print(event.tool_kwargs)  # the tool kwargs
 
+    ctx = None
+    # Read context from the file if it exists
+    if os.path.exists('context_dict.pkl'):
+        with open('context_dict.pkl', 'rb') as f:
+            ctx_dict = pickle.load(f)
+            ctx = Context.from_dict(workflow, data=ctx_dict, serializer=JsonPickleSerializer())
+
+    handler = workflow.run(ctx=ctx, user_msg=question)
+    response = await handler
+
+    ctx_dict = handler.ctx.to_dict(serializer=JsonPickleSerializer())
+    with open('context_dict.pkl', 'wb') as f:
+        pickle.dump(ctx_dict, f)
+
+    print(str(response)) 
+    
 @click.command()
 @click.argument('question')
 def ask(question:str):
