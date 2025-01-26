@@ -1,10 +1,6 @@
 import os
-import logging
-import sys
-import nest_asyncio
-from dotenv import load_dotenv
 from llama_index.core import Settings
-from assistant.utils.common import (
+from utils.common import (
     configure_logging,
     apply_nest_asyncio,
     load_environment_variables,
@@ -28,11 +24,11 @@ class BaseAgent:
         load_environment_variables()
 
         # Initialize services
-        self.azure_llm, self.azure_embedding = initialize_azure_services()
-        self.ollama_llm, self.ollama_embedding = initialize_ollama_services()
+        self.azure_llm, self.azure_embedding, _ = initialize_azure_services()
+        self.ollama_llm, self.ollama_embedding, _ = initialize_ollama_services()
 
         Settings.embed_model = self.ollama_embedding
-        Settings.llm = self.ollama_llm
+        Settings.llm = self.azure_llm
 
         self.prompt = read_md_file(os.path.join(os.getcwd(), prompt_file))
 

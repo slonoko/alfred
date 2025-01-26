@@ -1,35 +1,9 @@
-import json
 import pickle
 import click
-import logging
-import sys
-import os
-import nest_asyncio
 import asyncio
-from dotenv import load_dotenv
-from llama_index.core.callbacks import CallbackManager
 from tools.flight_assistant import FlightAssistantTool
 from tools.exchange_rate import ExchangeRateTool
-from llama_index.core.agent.workflow import (
-    AgentWorkflow,
-    ReActAgent,
-    FunctionAgent,
-    AgentStream,
-    AgentInput,
-    AgentOutput,
-    ToolCall,
-    ToolCallResult
-)
-from llama_index.core.tools import FunctionTool
-from llama_index.core import Settings
-from utils.common import (
-    configure_logging,
-    apply_nest_asyncio,
-    load_environment_variables,
-    initialize_azure_services,
-    initialize_ollama_services,
-    read_md_file
-)
+from utils.base_agent import BaseAgent
 
 from llama_index.core.workflow import (
     Context,
@@ -37,45 +11,28 @@ from llama_index.core.workflow import (
     JsonPickleSerializer,
 )
 
-# Logging configuration
-configure_logging()
+import os
 
-# Apply nest_asyncio
-apply_nest_asyncio()
+class TravelAssistant(BaseAgent):
+    def __init__(self):
+        super().__init__('assistant/prompts/flightassistant_prompt.MD')
 
-# Load environment variables
-load_environment_variables()
+    def prepare_chat(self):
+        flight_tool = FlightAssistantTool()
+        exchange_rate_spec = ExchangeRateTool()
+        tools = []
+        tools.extend(flight_tool.to_tool_list())
+        tools.extend(exchange_rate_spec.to_tool_list())
 
-# Initialize services
-azure_llm, azure_embedding, _ = initialize_azure_services()
-ollama_llm, ollama_embedding, _ = initialize_ollama_services()
+        return super().prepare_chat(
+            agent_name="flightassistant",
+            agent_description="Perform flight search and exchange rate conversion",
+            tools=tools
+        )
 
-Settings.embed_model = ollama_embedding
-Settings.llm = azure_llm
-
-def prepare_chat():
-    flight_tool = FlightAssistantTool()
-    exchange_rate_spec = ExchangeRateTool()
-    tools = []
-    tools.extend(flight_tool.to_tool_list())
-    tools.extend(exchange_rate_spec.to_tool_list())
-
-    prompt = read_md_file(os.path.join(os.getcwd(), 'assistant/prompts/flightassistant_prompt.MD'))
-
-    broker_agent = ReActAgent(
-        name="flightassistant",
-        description="Perform flight search and exchange rate conversion",
-        system_prompt=prompt,
-        tools=tools,
-        llm=Settings.llm,
-    )
-
-    agent = AgentWorkflow(agents=[broker_agent], root_agent="flightassistant")
-    
-    return agent  
-
-async def run_command(question: str = None, memory: bool = False):
-    workflow = prepare_chat()
+async def run_command(question: str = None, memory: bool = True):
+    assistant = TravelAssistant()
+    workflow = assistant.prepare_chat()
     ctx = None
     CTX_PKL = 'ctx_travel_assistant.pkl'
 
@@ -92,7 +49,7 @@ async def run_command(question: str = None, memory: bool = False):
         with open(CTX_PKL, 'wb') as f:
             pickle.dump(ctx_dict, f)
 
-    print(str(response)) 
+    print(str(response))
 
 @click.command()
 @click.argument('question')
