@@ -115,29 +115,30 @@ def prepare_chat():
     
     return agent  
 
-async def run_command(question:str=None):
+async def run_command(question:str=None, memory:bool=True):
     workflow = prepare_chat()
-
     ctx = None
-    # Read context from the file if it exists
-    if os.path.exists('context_dict.pkl'):
+
+    if memory and os.path.exists('context_dict.pkl'):
         with open('context_dict.pkl', 'rb') as f:
             ctx_dict = pickle.load(f)
-            ctx = Context.from_dict(workflow, data=ctx_dict, serializer=JsonPickleSerializer())
+            ctx = Context.from_dict(workflow, data=ctx_dict, serializer=JsonSerializer())
 
     handler = workflow.run(ctx=ctx, user_msg=question)
     response = await handler
 
-    ctx_dict = handler.ctx.to_dict(serializer=JsonPickleSerializer())
-    with open('context_dict.pkl', 'wb') as f:
-        pickle.dump(ctx_dict, f)
+    if memory:
+        ctx_dict = handler.ctx.to_dict(serializer=JsonPickleSerializer())
+        with open('context_dict.pkl', 'wb') as f:
+            pickle.dump(ctx_dict, f)
 
     print(str(response)) 
     
 @click.command()
 @click.argument('question')
-def ask(question:str):
-    asyncio.run(run_command(question))
+@click.option('-m', '--memory', help='Use memory to store context', type=bool, is_flag=True) # prompt=True https://click.palletsprojects.com/en/stable/options/
+def ask(question:str, memory:bool):
+    asyncio.run(run_command(question, memory))
 
 if __name__ == "__main__":
     ask()
