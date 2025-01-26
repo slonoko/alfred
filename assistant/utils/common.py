@@ -19,7 +19,6 @@ import pickle
 # Logging configuration
 def configure_logging(level=logging.INFO):
     logging.basicConfig(stream=sys.stdout, level=level)
-    logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
 
 
 # Apply nest_asyncio
