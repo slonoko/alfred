@@ -1,3 +1,4 @@
+import pickle
 import click
 import logging
 import sys
@@ -5,11 +6,6 @@ import os
 import nest_asyncio
 import asyncio
 from dotenv import load_dotenv
-from llama_index.llms.ollama import Ollama
-from llama_index.embeddings.ollama import OllamaEmbedding
-from llama_index.llms.azure_openai import AzureOpenAI
-from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
-from llama_index.core.callbacks import CallbackManager
 from llama_index.tools.yahoo_finance import YahooFinanceToolSpec
 from tools.exchange_rate import ExchangeRateTool
 from llama_index.core.agent.workflow import (
@@ -24,68 +20,36 @@ from llama_index.core.agent.workflow import (
 )
 from llama_index.core.tools import FunctionTool
 from llama_index.core import Settings
+from assistant.utils.common import (
+    configure_logging,
+    apply_nest_asyncio,
+    load_environment_variables,
+    initialize_azure_services,
+    initialize_ollama_services,
+    read_md_file
+)
+
+from llama_index.core.workflow import (
+    Context,
+    JsonSerializer,
+    JsonPickleSerializer,
+)
 
 # Logging configuration
-logging.basicConfig(stream=sys.stdout, level=logging.ERROR)
-logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
+configure_logging()
 
 # Apply nest_asyncio
-nest_asyncio.apply()
+apply_nest_asyncio()
 
 # Load environment variables
-load_dotenv()
+load_environment_variables()
 
-# Configuration Constants
-AZURE_LLM_MODEL = "gpt-4o-mini"
-AZURE_EMBED_MODEL = "text-embedding-ada-002"
-MILVUS_URI = "http://localhost:19530"
-OLLAMA_URL = "http://localhost:11434"
-MODEL_NAME = "llama3.1"
-
-# Retrieve environment variables with error handling
-api_key = os.getenv("azure_api_key")
-azure_endpoint = os.getenv("azure_endpoint")
-api_version = os.getenv("azure_api_version")
-
-if not all([api_key, azure_endpoint, api_version]):
-    raise EnvironmentError("Missing one or more Azure environment variables")
-
-# Initialize Azure services
-azure_llm = AzureOpenAI(
-    model=AZURE_LLM_MODEL,
-    deployment_name=AZURE_LLM_MODEL,
-    api_key=api_key,
-    azure_endpoint=azure_endpoint,
-    api_version=api_version,
-)
-
-azure_embedding = AzureOpenAIEmbedding(
-    model=AZURE_EMBED_MODEL,  # dim 1536
-    deployment_name=AZURE_EMBED_MODEL,
-    api_key=api_key,
-    azure_endpoint=azure_endpoint,
-    api_version=api_version,
-)
-
-# "nomic-embed-text" as alternative
-ollama_embedding = OllamaEmbedding(
-    model_name= "bge-m3", # dim 1024
-    base_url=OLLAMA_URL
-)
-
-ollama_llm = Ollama(model=MODEL_NAME, base_url=OLLAMA_URL, request_timeout=360.0)
+# Initialize services
+azure_llm, azure_embedding, _ = initialize_azure_services()
+ollama_llm, ollama_embedding, _ = initialize_ollama_services()
 
 Settings.embed_model = ollama_embedding
-Settings.llm = ollama_llm
-
-def read_md_file(file_path):
-    try:
-        with open(file_path, 'r') as file:
-            content = file.read()
-            return content
-    except FileNotFoundError:
-        print(f"File not found: {file_path}")
-        return None
+Settings.llm = azure_llm
 
 def prepare_chat():
     finances_spec = YahooFinanceToolSpec()
@@ -94,7 +58,7 @@ def prepare_chat():
     tools.extend(finances_spec.to_tool_list())
     tools.extend(exchange_rate_spec.to_tool_list())
 
-    prompt = read_md_file(os.path.join(os.getcwd() ,'assistant/prompts/trader_prompt.MD'))
+    prompt = read_md_file(os.path.join(os.getcwd(), 'assistant/prompts/trader_prompt.MD'))
 
     broker_agent = ReActAgent(
         name="broker",
@@ -108,35 +72,31 @@ def prepare_chat():
     
     return agent  
 
-async def run_command(question:str=None):
+async def run_command(question: str = None, memory: bool = False):
     workflow = prepare_chat()
-    handler = await workflow.run(user_msg=question)
-    print(str(handler)) 
-    # async for event in handler.stream_events():
-    #     if isinstance(event, AgentStream):
-    #         print(event.delta, end="", flush=True)
-    #         print(event.response)  # the current full response
-    #         print(event.raw)  # the raw llm api response
-    #         print(event.current_agent_name)  # the current agent name
-    #     elif isinstance(event, AgentInput):
-    #        print(event.input)  # the current input messages
-    #        print(event.current_agent_name)  # the current agent name
-    #     elif isinstance(event, AgentOutput):
-    #        print(event.response)  # the current full response
-    #        print(event.tool_calls)  # the selected tool calls, if any
-    #        print(event.raw)  # the raw llm api response
-    #     elif isinstance(event, ToolCallResult):
-    #        print(event.tool_name)  # the tool name
-    #        print(event.tool_kwargs)  # the tool kwargs
-    #        print(event.tool_output)  # the tool output
-    #     elif isinstance(event, ToolCall):
-    #         print(event.tool_name)  # the tool name
-    #         print(event.tool_kwargs)  # the tool kwargs
+    ctx = None
+    CTX_PKL = 'ctx_stock_broker.pkl'
+
+    if memory and os.path.exists(CTX_PKL):
+        with open(CTX_PKL, 'rb') as f:
+            ctx_dict = pickle.load(f)
+            ctx = Context.from_dict(workflow, data=ctx_dict, serializer=JsonSerializer())
+
+    handler = workflow.run(ctx=ctx, user_msg=question)
+    response = await handler
+
+    if memory:
+        ctx_dict = handler.ctx.to_dict(serializer=JsonPickleSerializer())
+        with open(CTX_PKL, 'wb') as f:
+            pickle.dump(ctx_dict, f)
+
+    print(str(response)) 
 
 @click.command()
 @click.argument('question')
-def ask(question:str):
-    asyncio.run(run_command(question))
+@click.option('-m', '--memory', help='Use memory to store context', type=bool, is_flag=True)
+def ask(question: str, memory: bool):
+    asyncio.run(run_command(question, memory))
 
 if __name__ == "__main__":
     ask()
