@@ -46,6 +46,9 @@ Alfred is a personal assistant designed to help with a variety of tasks, from an
     azure_api_key=<your_azure_api_key>
     azure_endpoint=<your_azure_endpoint>
     azure_api_version=<your_azure_api_version>
+    RAPIDAPI_KEY=<rapid_api_key>
+    RAPIDAPI_HOST=<host>.p.rapidapi.com
+    SELECTED_LLM_MODEL=<azure or the ollama model name>
     ```
 
 6. **Install Required Docker Services:**
@@ -60,21 +63,7 @@ Alfred is a personal assistant designed to help with a variety of tasks, from an
       ollama/ollama
     ```
 
-    b. **Install Aim:**
-    ```sh
-    # First initialize Aim locally
-    mkdir aim
-    cd aim
-    aim init
-
-    docker run -d -p 0.0.0.0:43800:43800 --network host \
-      -v $pwd/aim/.aim:/opt/aim/.aim \
-      --restart always \
-      --name aim \
-      aimstack/aim
-    ```
-
-    c. **Install Milvus:**
+    b. **Install Milvus:**
     ```sh
     # Create Milvus directory
     mkdir .db
