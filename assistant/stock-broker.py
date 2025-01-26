@@ -1,17 +1,9 @@
-import pickle
 import click
 import asyncio
 from llama_index.tools.yahoo_finance import YahooFinanceToolSpec
 from tools.exchange_rate import ExchangeRateTool
 from utils.base_agent import BaseAgent
-
-from llama_index.core.workflow import (
-    Context,
-    JsonSerializer,
-    JsonPickleSerializer,
-)
-
-import os
+from utils.common import save_context, load_context
 
 class StockBroker(BaseAgent):
     def __init__(self):
@@ -36,20 +28,18 @@ async def run_command(question: str = None, memory: bool = False):
     ctx = None
     CTX_PKL = 'ctx_stock_broker.pkl'
 
-    if memory and os.path.exists(CTX_PKL):
-        with open(CTX_PKL, 'rb') as f:
-            ctx_dict = pickle.load(f)
-            ctx = Context.from_dict(workflow, data=ctx_dict, serializer=JsonSerializer())
+    if memory:
+        ctx = load_context(workflow, CTX_PKL)
 
     handler = workflow.run(ctx=ctx, user_msg=question)
     response = await handler
 
     if memory:
-        ctx_dict = handler.ctx.to_dict(serializer=JsonPickleSerializer())
-        with open(CTX_PKL, 'wb') as f:
-            pickle.dump(ctx_dict, f)
+        save_context(handler, CTX_PKL)
 
     print(str(response))
+
+
 
 @click.command()
 @click.argument('question')

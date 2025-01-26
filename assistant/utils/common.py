@@ -8,19 +8,29 @@ from llama_index.embeddings.ollama import OllamaEmbedding
 from llama_index.llms.azure_openai import AzureOpenAI
 from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
 from llama_index.core import Settings
+from llama_index.core.workflow import (
+    Context,
+    JsonSerializer,
+    JsonPickleSerializer,
+)
+import pickle
+
 
 # Logging configuration
 def configure_logging(level=logging.INFO):
     logging.basicConfig(stream=sys.stdout, level=level)
     logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
 
+
 # Apply nest_asyncio
 def apply_nest_asyncio():
     nest_asyncio.apply()
 
+
 # Load environment variables
 def load_environment_variables():
     load_dotenv()
+
 
 # Initialize Azure services
 def initialize_azure_services():
@@ -51,6 +61,7 @@ def initialize_azure_services():
 
     return azure_llm, azure_embedding, 1536
 
+
 # Initialize Ollama services
 def initialize_ollama_services():
     OLLAMA_URL = "http://localhost:11434"
@@ -58,20 +69,38 @@ def initialize_ollama_services():
     EMBED_MODEL_NAME = "bge-m3"
 
     ollama_embedding = OllamaEmbedding(
-        model_name=EMBED_MODEL_NAME,  # dim 1024
-        base_url=OLLAMA_URL
+        model_name=EMBED_MODEL_NAME, base_url=OLLAMA_URL  # dim 1024
     )
 
     ollama_llm = Ollama(model=MODEL_NAME, base_url=OLLAMA_URL, request_timeout=360.0)
 
     return ollama_llm, ollama_embedding, 1024
 
+
 # Read markdown file
 def read_md_file(file_path):
     try:
-        with open(file_path, 'r') as file:
+        with open(file_path, "r") as file:
             content = file.read()
             return content
     except FileNotFoundError:
         print(f"File not found: {file_path}")
         return None
+
+
+def save_context(handler, pkl_file):
+    ctx_dict = handler.ctx.to_dict(serializer=JsonPickleSerializer())
+    with open(pkl_file, "wb") as f:
+        pickle.dump(ctx_dict, f)
+
+
+def load_context(workflow, pkl_file):
+    ctx = None
+
+    if os.path.exists(pkl_file):
+        with open(pkl_file, "rb") as f:
+            ctx_dict = pickle.load(f)
+            ctx = Context.from_dict(
+                workflow, data=ctx_dict, serializer=JsonSerializer()
+            )
+    return ctx

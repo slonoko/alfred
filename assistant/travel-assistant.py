@@ -4,6 +4,7 @@ import asyncio
 from tools.flight_assistant import FlightAssistantTool
 from tools.exchange_rate import ExchangeRateTool
 from utils.base_agent import BaseAgent
+from utils.common import save_context, load_context
 
 from llama_index.core.workflow import (
     Context,
@@ -36,18 +37,14 @@ async def run_command(question: str = None, memory: bool = True):
     ctx = None
     CTX_PKL = 'ctx_travel_assistant.pkl'
 
-    if memory and os.path.exists(CTX_PKL):
-        with open(CTX_PKL, 'rb') as f:
-            ctx_dict = pickle.load(f)
-            ctx = Context.from_dict(workflow, data=ctx_dict, serializer=JsonSerializer())
+    if memory:
+        ctx = load_context(workflow, CTX_PKL)
 
     handler = workflow.run(ctx=ctx, user_msg=question)
     response = await handler
 
     if memory:
-        ctx_dict = handler.ctx.to_dict(serializer=JsonPickleSerializer())
-        with open(CTX_PKL, 'wb') as f:
-            pickle.dump(ctx_dict, f)
+        save_context(handler, CTX_PKL)
 
     print(str(response))
 
