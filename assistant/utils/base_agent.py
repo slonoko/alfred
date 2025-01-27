@@ -1,3 +1,4 @@
+import logging
 import os
 from llama_index.core import Settings
 from utils.common import (
@@ -15,7 +16,7 @@ from llama_index.core.agent.workflow import (
 class BaseAgent:
     def __init__(self, prompt_file):
         # Logging configuration
-        configure_logging()
+        configure_logging(level=logging.DEBUG)
 
         # Apply nest_asyncio
         apply_nest_asyncio()
