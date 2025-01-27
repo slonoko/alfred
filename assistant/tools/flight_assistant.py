@@ -30,7 +30,8 @@ class FlightAssistantTool(BaseToolSpec):
         self, from_airport_code="FRA", to_airport_code="STR", year_month="2025-03"
     ):
         """
-        A usefull function that takes as input the source airport code, destination airport code, and the month of the year (format YYYY-MM) and returns the flights data in json format.
+        A usefull function that takes as input the source airport code, destination airport code, and the month of the year (format YYYY-MM) 
+        and returns the flights data in json format. This function is useful to get flights for a specific month.
         """
         logging.debug(
             f"Searching flights from {from_airport_code} to {to_airport_code} for the month {year_month}"
@@ -55,7 +56,8 @@ class FlightAssistantTool(BaseToolSpec):
         return_year_month="2025-04",
     ):
         """
-        A usefull function that takes as input the source airport code, destination airport code, and the month of the year (format YYYY-MM) and returns the flights data in json format.
+        A usefull function that takes as input the source airport code, destination airport code, and the month of the year (format YYYY-MM) 
+        and returns the flights data in json format. This function is useful to get flights for a specific departure month and returning month.
         """
         logging.debug(
             f"Searching flights from {from_airport_code} to {to_airport_code} for the month {year_month}, and returning on {return_year_month}"
@@ -91,7 +93,7 @@ class FlightAssistantTool(BaseToolSpec):
         self,
         from_airport_code="FRA",
         to_airport_code="STR",
-        depart_date="2025-03",
+        depart_date="2025-02-14",
         stops="direct",
         children="0",
         infants="0",
@@ -102,7 +104,7 @@ class FlightAssistantTool(BaseToolSpec):
         airlines=None
     ):
         """
-        A usefull function that searches for one way flights based on multiple parameters and returns the flights data in json format.
+        A usefull function that searches for one way flights for a specific date based on multiple parameters and returns the flights data in json format.
         Important to note that the parameter:
         - cabinClass can take exclusively one of the following values: economy, premium_economy, business, first
         - stops can take one or more of the following values: direct, 1stop, 2stops
@@ -140,8 +142,8 @@ class FlightAssistantTool(BaseToolSpec):
         self,
         from_airport_code="FRA",
         to_airport_code="STR",
-        depart_date="2025-03",
-        return_date="2025-04",
+        depart_date="2025-02-14",
+        return_date="2025-03-14",
         stops="direct",
         children="0",
         infants="0",
@@ -152,7 +154,7 @@ class FlightAssistantTool(BaseToolSpec):
         airlines=None
     ):
         """
-        A usefull function that searches for round trip flights based on multiple parameters and returns the flights data in json format.
+        A usefull function that searches for round trip flights for specific dates based on multiple parameters and returns the flights data in json format.
         Important to note that the parameter:
         - cabinClass can take exclusively one of the following values: economy, premium_economy, business, first
         - stops can take one or more of the following values: direct, 1stop, 2stops
