@@ -5,6 +5,8 @@ from tools.exchange_rate import ExchangeRateTool
 from utils.base_agent import BaseAgent
 from utils.common import save_context, load_context
 
+# python assistant/stock-broker.py -m "considering the drop in stock price of nvidia this week, do you still recommend buying nvidia shares? explain your analyis, and provide me in the end with a concrete recommendation"
+
 class StockBroker(BaseAgent):
     def __init__(self):
         super().__init__('assistant/prompts/trader_prompt.MD')

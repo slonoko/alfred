@@ -22,3 +22,4 @@ pymilvus>=2.4.2
 setuptools
 build
 docker
+streamlit
