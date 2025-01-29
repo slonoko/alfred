@@ -8,8 +8,8 @@ from utils.common import save_context, load_context
 # python assistant/stock-broker.py -m "considering the drop in stock price of nvidia this week, do you still recommend buying nvidia shares? explain your analyis, and provide me in the end with a concrete recommendation"
 
 class StockBroker(BaseAgent):
-    def __init__(self):
-        super().__init__('assistant/prompts/trader_prompt.MD')
+    def __init__(self, model_name):
+        super().__init__('assistant/prompts/trader_prompt.MD', model_name=model_name)
 
     def prepare_chat(self):
         finances_spec = YahooFinanceToolSpec()
@@ -24,8 +24,8 @@ class StockBroker(BaseAgent):
             tools=tools
         )
 
-async def run_command(question: str = None, memory: bool = False):
-    broker = StockBroker()
+async def run_command(question: str = None, memory: bool = False, model_name: str = 'llama3.1'):
+    broker = StockBroker(model_name)
     workflow = broker.prepare_chat()
     ctx = None
     CTX_PKL = 'ctx_stock_broker.pkl'
@@ -39,15 +39,17 @@ async def run_command(question: str = None, memory: bool = False):
     if memory:
         save_context(handler, CTX_PKL)
 
-    print(str(response))
+    return str(response)
 
 
 
 @click.command()
 @click.argument('question')
-@click.option('-m', '--memory', help='Use memory to store context', type=bool, is_flag=True)
-def ask(question: str, memory: bool):
-    asyncio.run(run_command(question, memory))
+@click.option('-s', '--store', help='Use memory to store context', type=bool, is_flag=True)
+@click.option('-m', '--model', help='The model name', type=str)
+def ask(question: str, store: bool, model: str = 'llama3.1'):
+    result = asyncio.run(run_command(question, store, model))
+    print(result)
 
 if __name__ == "__main__":
     ask()

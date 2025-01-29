@@ -15,8 +15,8 @@ from llama_index.core.workflow import (
 import os
 
 class TravelAssistant(BaseAgent):
-    def __init__(self):
-        super().__init__('assistant/prompts/flightassistant_prompt.MD')
+    def __init__(self, model_name):
+        super().__init__('assistant/prompts/flightassistant_prompt.MD', model_name)
 
     def prepare_chat(self):
         flight_tool = FlightAssistantTool()
@@ -31,9 +31,9 @@ class TravelAssistant(BaseAgent):
             tools=tools
         )
 
-async def run_command(question: str = None, memory: bool = True):
-    assistant = TravelAssistant()
-    workflow = assistant.prepare_chat()
+async def run_command(question: str = None, memory: bool = False, model_name: str = 'llama3.1'):
+    broker = TravelAssistant(model_name)
+    workflow = broker.prepare_chat()
     ctx = None
     CTX_PKL = 'ctx_travel_assistant.pkl'
 
@@ -46,13 +46,17 @@ async def run_command(question: str = None, memory: bool = True):
     if memory:
         save_context(handler, CTX_PKL)
 
-    print(str(response))
+    return str(response)
+
+
 
 @click.command()
 @click.argument('question')
-@click.option('-m', '--memory', help='Use memory to store context', type=bool, is_flag=True)
-def ask(question: str, memory: bool):
-    asyncio.run(run_command(question, memory))
+@click.option('-s', '--store', help='Use memory to store context', type=bool, is_flag=True)
+@click.option('-m', '--model', help='The model name', type=str)
+def ask(question: str, store: bool, model: str = 'llama3.1'):
+    result = asyncio.run(run_command(question, store, model))
+    print(result)
 
 if __name__ == "__main__":
     ask()

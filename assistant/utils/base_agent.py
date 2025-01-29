@@ -14,7 +14,7 @@ from llama_index.core.agent.workflow import (
     ReActAgent)
 
 class BaseAgent:
-    def __init__(self, prompt_file):
+    def __init__(self, prompt_file, model_name="llama3.1"):
         # Logging configuration
         configure_logging(level=logging.DEBUG)
 
@@ -26,10 +26,10 @@ class BaseAgent:
 
         # Initialize services
         self.azure_llm, self.azure_embedding, _ = initialize_azure_services()
-        self.ollama_llm, self.ollama_embedding, _ = initialize_ollama_services()
+        self.ollama_llm, self.ollama_embedding, _ = initialize_ollama_services(model_name)
 
         Settings.embed_model = self.ollama_embedding
-        Settings.llm = self.azure_llm if os.getenv("SELECTED_LLM_MODEL", "azure") == 'azure' else self.ollama_llm
+        Settings.llm = self.azure_llm if model_name == 'azure' else self.ollama_llm
 
         self.prompt = read_md_file(os.path.join(os.getcwd(), prompt_file))
 
