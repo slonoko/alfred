@@ -42,6 +42,9 @@ class FinancialDataToolSpec(BaseToolSpec):
             "x-rapidapi-key": os.getenv("RAPIDAPI_KEY"),
             "x-rapidapi-host": os.getenv("RAPIDAPI_HOST"),
         }
+        logging.debug("Financial data tool initialized.")
+        logging.debug(f"API URL: {self.api_url}")
+        logging.debug(f"Headers: {self.headers}")
 
     def get_news_list(self, news_type: str = "latest"):
         """
