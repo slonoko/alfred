@@ -1,6 +1,7 @@
 import click
 import asyncio
 from llama_index.tools.yahoo_finance import YahooFinanceToolSpec
+from tools.financial_data import FinancialDataToolSpec
 from tools.exchange_rate import ExchangeRateTool
 from utils.base_agent import BaseAgent
 from utils.common import save_context, load_context
@@ -12,7 +13,7 @@ class StockBroker(BaseAgent):
         super().__init__('assistant/prompts/trader_prompt.MD', model_name=model_name)
 
     def prepare_chat(self):
-        finances_spec = YahooFinanceToolSpec()
+        finances_spec = FinancialDataToolSpec()
         exchange_rate_spec = ExchangeRateTool()
         tools = []
         tools.extend(finances_spec.to_tool_list())
