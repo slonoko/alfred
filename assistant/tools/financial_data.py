@@ -9,7 +9,7 @@ load_dotenv()
 
 class FinancialDataToolSpec(BaseToolSpec):
     """
-    Exchange Rate tool spec."""
+    Stocks financial data tool spec."""
 
     spec_functions = [
         "get_news_list",
