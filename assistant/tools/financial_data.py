@@ -40,7 +40,7 @@ class FinancialDataToolSpec(BaseToolSpec):
         self.api_url = "https://investing11.p.rapidapi.com/"
         self.headers = {
             "x-rapidapi-key": os.getenv("RAPIDAPI_KEY"),
-            "x-rapidapi-host": os.getenv("RAPIDAPI_HOST"),
+            "x-rapidapi-host": os.getenv("INVESTING_HOST"),
         }
         logging.debug("Financial data tool initialized.")
         logging.debug(f"API URL: {self.api_url}")

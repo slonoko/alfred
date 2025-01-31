@@ -23,7 +23,7 @@ class FlightAssistantTool(BaseToolSpec):
 
         self.headers = {
             "x-rapidapi-key": os.getenv("RAPIDAPI_KEY"),
-            "x-rapidapi-host": os.getenv("RAPIDAPI_HOST"),
+            "x-rapidapi-host": os.getenv("SKYSCANNER_HOST"),
         }
 
     def oneway_flights_month(
