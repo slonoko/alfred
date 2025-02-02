@@ -40,7 +40,7 @@ Alfred is a personal assistant designed to help with a variety of tasks, from an
 
 5. **Set up environment variables:**
 
-    Create a [`.env`](.env ) file in the root directory and add the following variables:
+    **Create a [`.env`](.env ) file in the [`assistant`](assistant ) directory and add the following variables:**
 
     ```env
     azure_api_key=<your_azure_api_key>
@@ -48,7 +48,6 @@ Alfred is a personal assistant designed to help with a variety of tasks, from an
     azure_api_version=<your_azure_api_version>
     RAPIDAPI_KEY=<rapid_api_key>
     RAPIDAPI_HOST=<host>.p.rapidapi.com
-    SELECTED_LLM_MODEL=<azure or the ollama model name>
     ```
 
 6. **Install Required Docker Services:**
