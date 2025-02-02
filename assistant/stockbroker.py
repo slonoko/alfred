@@ -10,7 +10,7 @@ from utils.common import save_context, load_context
 
 class StockBroker(BaseAgent):
     def __init__(self, model_name):
-        super().__init__('assistant/prompts/trader_prompt.MD', model_name=model_name)
+        super().__init__('prompts/trader_prompt.MD', model_name=model_name)
 
     def prepare_chat(self):
         finances_spec = FinancialDataToolSpec()
