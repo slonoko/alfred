@@ -76,14 +76,15 @@ Alfred is a personal assistant designed to help with a variety of tasks, from an
     bash standalone_embed.sh start
     ```
 
-7. **Optional: Install Chroma**
+7. **Install Alfred chat app**
 
     ```sh
-    docker run -d -p 8000:8000 --network host \
-      -v <project_path>/alfred/.storage/alfred_db/:/chroma/chroma \
+    docker build -t alfred-chat .
+
+    docker run -d -p 8501:8501 --network host \
       --restart always \
-      --name chromadb \
-      chromadb/chroma
+      --name alfred \
+      alfred-chat
     ```
 
 8. **Optional: Install Open WebUI**
@@ -101,16 +102,23 @@ Alfred is a personal assistant designed to help with a variety of tasks, from an
 
 The project provides several commands that can be executed using the CLI:
 
-- **Scan Emails:**
+- **Web app:**
 
     ```sh
-    python assistant/main.py scan-emails
+    cd assistant
+    streamlit run assistant/chat.py 
     ```
 
-- **Chat:**
+- **Console:**
 
     ```sh
-    python assistant/main.py chat
+    cd assistant
+    
+    # Stock broker
+    python stockbroker.py -s -m llama3.1 "what is the current price of nvidia? (in euro)"
+
+    # travel assistant
+    python travelassistant.py -s -m llama3.1 "Any direct flights from Stuttgart to Paris in May 2025?"
     ```
 
 ## Project Configuration
