@@ -1,6 +1,5 @@
 import click
 import asyncio
-from llama_index.tools.yahoo_finance import YahooFinanceToolSpec
 from tools.financial_data import FinancialDataToolSpec
 from tools.exchange_rate import ExchangeRateTool
 from utils.base_agent import BaseAgent

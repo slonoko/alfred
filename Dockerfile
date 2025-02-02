@@ -14,6 +14,8 @@ RUN apt-get update && apt-get install -y \
 COPY assistant/. .
 
 RUN pip3 install -r requirements.txt
+RUN pip3 install llama-index-core==0.12.13
+RUN pip3 install llama-index==0.12.13
 
 EXPOSE 8501
 
