@@ -18,3 +18,5 @@ tqdm
 llama-index-llms-ollama
 llama-index
 llama-index-core
+llama-index-output-parsers-guardrails
+guardrails-ai

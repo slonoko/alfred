@@ -26,16 +26,16 @@ Alfred is a personal assistant designed to help with a variety of tasks, from an
     conda activate alfred
     ```
 
-3. **Install build dependencies:**
+3. **Set current directory:**
 
     ```sh
-    pip install build setuptools
+    cd assistant
     ```
 
-4. **Build the package:**
+4. **Install build dependencies:**
 
     ```sh
-    python -m build
+    pip install -r requirements.txt
     ```
 
 5. **Set up environment variables:**
@@ -46,8 +46,9 @@ Alfred is a personal assistant designed to help with a variety of tasks, from an
     azure_api_key=<your_azure_api_key>
     azure_endpoint=<your_azure_endpoint>
     azure_api_version=<your_azure_api_version>
-    RAPIDAPI_KEY=<rapid_api_key>
-    RAPIDAPI_HOST=<host>.p.rapidapi.com
+    RAPIDAPI_KEY=<key>
+    SKYSCANNER_HOST=<subdomain>.p.rapidapi.com
+    INVESTING_HOST=<subdomain>.p.rapidapi.com
     ```
 
 6. **Install Required Docker Services:**
@@ -61,8 +62,20 @@ Alfred is a personal assistant designed to help with a variety of tasks, from an
       --name ollama \
       ollama/ollama
     ```
+    
+    b. **Install Alfred chat app**
 
-    b. **Install Milvus:**
+    ```sh
+    docker build -t alfred-chat .
+
+    docker run -d -p 8501:8501 --network host \
+      --restart always \
+      --name alfred \
+      alfred-chat
+    ```
+
+7. **Install Optional Docker Services:**
+    a. **Optional: Install Milvus:**
     ```sh
     # Create Milvus directory
     mkdir .db
@@ -75,18 +88,7 @@ Alfred is a personal assistant designed to help with a variety of tasks, from an
     bash standalone_embed.sh start
     ```
 
-7. **Install Alfred chat app**
-
-    ```sh
-    docker build -t alfred-chat .
-
-    docker run -d -p 8501:8501 --network host \
-      --restart always \
-      --name alfred \
-      alfred-chat
-    ```
-
-8. **Optional: Install Open WebUI**
+    b. **Optional: Install Open WebUI**
 
     ```sh
     docker run -d -p 8080:8080 --gpus all --network host \
@@ -105,7 +107,7 @@ The project provides several commands that can be executed using the CLI:
 
     ```sh
     cd assistant
-    streamlit run assistant/chat.py 
+    streamlit run chat.py 
     ```
 
 - **Console:**
@@ -118,37 +120,6 @@ The project provides several commands that can be executed using the CLI:
 
     # travel assistant
     python travelassistant.py -s -m llama3.1 "Any direct flights from Stuttgart to Paris in May 2025?"
-    ```
-
-## Project Configuration
-
-The project uses [`pyproject.toml`](pyproject.toml ) for configuration. Here are some key sections:
-
-- **Dependencies:**
-
-    ```toml
-    [project]
-    dependencies = [
-        "llama-index-core>=0.10.39.post1",
-        "llama-index-readers-file>=0.1.23",
-        "llama-index-llms-ollama>=0.1.5",
-        "llama-index-embeddings-huggingface>=0.2.0",
-        "transformers>=4.41.1",
-        "google-api-python-client>=2.130.0",
-        "google-auth-httplib2>=0.2.0",
-        "google-auth-oauthlib>=1.2.0",
-        "beautifulsoup4>=4.12.3",
-        "llama-index>=0.10.39",
-        "llama-index-vector-stores-chroma>=0.1.5",
-        ...
-    ]
-    ```
-
-- **Scripts:**
-
-    ```toml
-    [project.scripts]
-    assistant = "assistant.main:cli"
     ```
 
 ## License
