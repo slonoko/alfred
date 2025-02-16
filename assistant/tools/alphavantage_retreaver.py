@@ -12,9 +12,9 @@ class AlphaVantageToolSpec(BaseToolSpec):
     Stocks financial data tool spec."""
 
     spec_functions = [
-        "read_functions_json",
+        "get_available_functions",
         "get_apikey",
-        "get_alphavantage_data",
+        "execute_function",
     ]
 
     def __init__(self):
@@ -28,7 +28,7 @@ class AlphaVantageToolSpec(BaseToolSpec):
     def get_apikey(self):
         return self.apikey
     
-    def read_functions_json(self):
+    def get_available_functions(self):
         """
         Retrieve the list of operations related to stocks along with the input and example calls.
         """
@@ -42,7 +42,7 @@ class AlphaVantageToolSpec(BaseToolSpec):
             logging.error(f"An error occurred while reading functions.json: {e}")
             return {}
 
-    def get_alphavantage_data(
+    def execute_function(
         self, parameters: dict = None
     ):
         """
