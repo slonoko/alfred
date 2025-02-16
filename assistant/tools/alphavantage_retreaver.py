@@ -9,31 +9,42 @@ load_dotenv()
 
 class AlphaVantageToolSpec(BaseToolSpec):
     """
-    Stocks financial data tool spec."""
+    AlphaVantageToolSpec is a tool specification class for interacting with the Alpha Vantage API. 
+    It provides methods to retrieve available functions and execute them using the API. 
+    The `get_available_functions` method returns all possible functions related to stocks along with their parameters, which can be used as input for the `execute_function` method to query the Alpha Vantage API.
+    Based on the description of the function, select the appropriate parameters and pass them as a dictionary to the `execute_function` method to get the desired data from the API.
+    You do not need to pass the apikey as it is automatically included in the request.
+
+    """
 
     spec_functions = [
         "get_available_functions",
-        "get_apikey",
         "execute_function",
+        "get_apikey"
     ]
 
     def __init__(self):
         self.api_url = "https://www.alphavantage.co/query"
         self.apikey = os.getenv("ALPHA_VANTAGE_KEY")
 
-        logging.debug("Financial data tool initialized.")
+        logging.debug("Alpha Vantage tool initialized.")
         logging.debug(f"API URL: {self.api_url}")
         logging.debug(f"API_KEY: {self.apikey}")
 
     def get_apikey(self):
+        """
+        Retrieve the API key used to access the Alpha Vantage API.
+        """
+        logging.debug(f"Retrieving the API_KEY: {self.apikey}")
         return self.apikey
-    
+
     def get_available_functions(self):
         """
-        Retrieve the list of operations related to stocks along with the input and example calls.
+        Retrieve the list of functions related to stocks along with the description, parameters and example calls.
         """
         try:
-            with open("functions.json", "r") as file:
+            with open("./tools/functions.json", "r") as file:
+                logging.debug("functions.json loaded.")
                 return file.read()
         except FileNotFoundError:
             logging.error("functions.json file not found.")
@@ -43,16 +54,20 @@ class AlphaVantageToolSpec(BaseToolSpec):
             return {}
 
     def execute_function(
-        self, parameters: dict = None
+        self, function: str, parameters: dict = None
     ):
         """
-        Retrieve information from Alpha Vantage server.
-        :param parameters: A dictionary of parameters. The list of parameters can be found in the Alpha Vantage json extracted from the read_functions_json method.
+        Retrieve information from Alpha Vantage server. No need to pass the apikey as it is automatically included in the request.
+        :param function: The function name to be executed. The function can be selected from the list of functions in the json extracted from the get_available_functions method, based on the description of the function.
+        :param parameters: A JSON object of parameters of key-value pair format, where the key if the parameter name. The list of parameters can be found in the Alpha Vantage json extracted from the read_functions_json method.
         :return: The response data from Alpha Vantage.
         """
         base_url = self.api_url
-        logging.debug(f"Generated URL: {base_url}")
-        logging.debug(f"Request parameters: {parameters}")
+        
+        # Add the apikey and function to the parameters
+        parameters = parameters or {}
+        parameters.update({"apikey": self.apikey}, {"function":function})
+        logging.debug(f"URL: {base_url}, and Request parameters: {parameters}")
         response = requests.get(base_url, params=parameters)
         if response.status_code == 200:
             return response.json()
