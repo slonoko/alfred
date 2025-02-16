@@ -1,0 +1,2588 @@
+[
+  {
+    "function": "TIME_SERIES_INTRADAY",
+    "description": "This API returns current and 20+ years of historical intraday OHLCV time series of the equity specified, covering pre-market and post-market hours where applicable.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The time series of your choice. In this case, function=TIME_SERIES_INTRADAY"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the equity of your choice. For example: symbol=IBM"
+      },
+      "interval": {
+        "required": true,
+        "description": "Time interval between two consecutive data points in the time series. The following values are supported: 1min, 5min, 15min, 30min, 60min"
+      },
+      "adjusted": {
+        "required": false,
+        "description": "By default, adjusted=true and the output time series is adjusted by historical split and dividend events. Set adjusted=false to query raw (as-traded) intraday values."
+      },
+      "extended_hours": {
+        "required": false,
+        "description": "By default, extended_hours=true and the output time series will include both the regular trading hours and the extended (pre-market and post-market) trading hours (4:00am to 8:00pm Eastern Time for the US market). Set extended_hours=false to query regular trading hours (9:30am to 4:00pm US Eastern Time) only."
+      },
+      "month": {
+        "required": false,
+        "description": "By default, this parameter is not set and the API will return intraday data for the most recent days of trading. You can use the month parameter (in YYYY-MM format) to query a specific month in history. For example, month=2009-01. Any month in the last 20+ years since 2000-01 (January 2000) is supported."
+      },
+      "outputsize": {
+        "required": false,
+        "description": "By default, outputsize=compact. Strings compact and full are accepted with the following specifications: compact returns only the latest 100 data points in the intraday time series; full returns trailing 30 days of the most recent intraday data if the month parameter is not specified, or the full intraday data for a specific month in history if the month parameter is specified."
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the intraday time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=IBM&interval=5min&apikey=demo",
+      "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=IBM&interval=5min&outputsize=full&apikey=demo",
+      "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=IBM&interval=5min&month=2009-01&outputsize=full&apikey=demo",
+      "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=IBM&interval=5min&apikey=demo&datatype=csv"
+    ]
+  },
+  {
+    "function": "TIME_SERIES_DAILY",
+    "description": "This API returns raw (as-traded) daily time series (date, daily open, daily high, daily low, daily close, daily volume) of the global equity specified, covering 20+ years of historical data.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The time series of your choice. In this case, function=TIME_SERIES_DAILY"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the equity of your choice. For example: symbol=IBM"
+      },
+      "outputsize": {
+        "required": false,
+        "description": "By default, outputsize=compact. Strings compact and full are accepted with the following specifications: compact returns only the latest 100 data points; full returns the full-length time series of 20+ years of historical data."
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the daily time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&apikey=demo",
+      "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&outputsize=full&apikey=demo",
+      "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=TSCO.LON&outputsize=full&apikey=demo",
+      "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=SHOP.TRT&outputsize=full&apikey=demo",
+      "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=GPV.TRV&outputsize=full&apikey=demo",
+      "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=MBG.DEX&outputsize=full&apikey=demo",
+      "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=RELIANCE.BSE&outputsize=full&apikey=demo",
+      "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=600104.SHH&outputsize=full&apikey=demo",
+      "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=000002.SHZ&outputsize=full&apikey=demo",
+      "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&apikey=demo&datatype=csv"
+    ]
+  },
+  {
+    "function": "TIME_SERIES_DAILY_ADJUSTED",
+    "description": "This API returns raw (as-traded) daily open/high/low/close/volume values, adjusted close values, and historical split/dividend events of the global equity specified, covering 20+ years of historical data.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The time series of your choice. In this case, function=TIME_SERIES_DAILY_ADJUSTED"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the equity of your choice. For example: symbol=IBM"
+      },
+      "outputsize": {
+        "required": false,
+        "description": "By default, outputsize=compact. Strings compact and full are accepted with the following specifications: compact returns only the latest 100 data points; full returns the full-length time series of 20+ years of historical data."
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the daily time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=IBM&apikey=demo",
+      "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=IBM&outputsize=full&apikey=demo",
+      "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=TSCO.LON&outputsize=full&apikey=demo",
+      "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=SHOP.TRT&outputsize=full&apikey=demo",
+      "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=GPV.TRV&outputsize=full&apikey=demo",
+      "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=MBG.DEX&outputsize=full&apikey=demo",
+      "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=RELIANCE.BSE&outputsize=full&apikey=demo",
+      "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=600104.SHH&outputsize=full&apikey=demo",
+      "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=000002.SHZ&outputsize=full&apikey=demo",
+      "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=IBM&apikey=demo&datatype=csv"
+    ]
+  },
+  {
+    "function": "TIME_SERIES_WEEKLY",
+    "description": "This API returns weekly time series (last trading day of each week, weekly open, weekly high, weekly low, weekly close, weekly volume) of the global equity specified, covering 20+ years of historical data.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The time series of your choice. In this case, function=TIME_SERIES_WEEKLY"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the equity of your choice. For example: symbol=IBM"
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the weekly time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY&symbol=IBM&apikey=demo",
+      "https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY&symbol=TSCO.LON&apikey=demo",
+      "https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY&symbol=IBM&apikey=demo&datatype=csv"
+    ]
+  },
+  {
+    "function": "TIME_SERIES_WEEKLY_ADJUSTED",
+    "description": "This API returns weekly adjusted time series (last trading day of each week, weekly open, weekly high, weekly low, weekly close, weekly adjusted close, weekly volume, weekly dividend) of the global equity specified, covering 20+ years of historical data.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The time series of your choice. In this case, function=TIME_SERIES_WEEKLY_ADJUSTED"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the equity of your choice. For example: symbol=IBM"
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the weekly time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY_ADJUSTED&symbol=IBM&apikey=demo",
+      "https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY_ADJUSTED&symbol=TSCO.LON&apikey=demo",
+      "https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY_ADJUSTED&symbol=IBM&apikey=demo&datatype=csv"
+    ]
+  },
+  {
+    "function": "TIME_SERIES_MONTHLY",
+    "description": "This API returns monthly time series (last trading day of each month, monthly open, monthly high, monthly low, monthly close, monthly volume) of the global equity specified, covering 20+ years of historical data.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The time series of your choice. In this case, function=TIME_SERIES_MONTHLY"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the equity of your choice. For example: symbol=IBM"
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the monthly time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol=IBM&apikey=demo",
+      "https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol=TSCO.LON&apikey=demo",
+      "https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol=IBM&apikey=demo&datatype=csv"
+    ]
+  },
+  {
+    "function": "TIME_SERIES_MONTHLY_ADJUSTED",
+    "description": "This API returns monthly adjusted time series (last trading day of each month, monthly open, monthly high, monthly low, monthly close, monthly adjusted close, monthly volume, monthly dividend) of the equity specified, covering 20+ years of historical data.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The time series of your choice. In this case, function=TIME_SERIES_MONTHLY_ADJUSTED"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the equity of your choice. For example: symbol=IBM"
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the monthly time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol=IBM&apikey=demo",
+      "https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol=IBM&apikey=demo&datatype=csv"
+    ]
+  },
+  {
+    "function": "GLOBAL_QUOTE",
+    "description": "This endpoint returns the latest price and volume information for a ticker of your choice. You can specify one ticker per API request.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The API function of your choice. In this case, function=GLOBAL_QUOTE"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The symbol of the global ticker of your choice. For example: symbol=IBM"
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the quote data in JSON format; csv returns the quote data as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=IBM&apikey=demo",
+      "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=IBM&apikey=demo&datatype=csv"
+    ]
+  },
+  {
+    "function": "REALTIME_BULK_QUOTES",
+    "description": "This API returns realtime quotes for US-traded symbols in bulk, accepting up to 100 symbols per API request and covering both regular and extended (pre-market and post-market) trading hours.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The time series of your choice. In this case, function=REALTIME_BULK_QUOTES"
+      },
+      "symbol": {
+        "required": true,
+        "description": "Up to 100 symbols separated by comma. For example: symbol=MSFT,AAPL,IBM. If more than 100 symbols are provided, only the first 100 symbols will be honored as part of the API input."
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the search results in JSON format; csv returns the search results as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=REALTIME_BULK_QUOTES&symbol=MSFT,AAPL,IBM&apikey=demo"
+    ]
+  },
+  {
+    "function": "SYMBOL_SEARCH",
+    "description": "This API returns the best-matching symbols and market information based on keywords of your choice.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The API function of your choice. In this case, function=SYMBOL_SEARCH"
+      },
+      "keywords": {
+        "required": true,
+        "description": "A text string of your choice. For example: keywords=microsoft"
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the search results in JSON format; csv returns the search results as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=BA&apikey=demo",
+      "https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=tesco&apikey=demo",
+      "https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=BA&apikey=demo&datatype=csv"
+    ]
+  },
+  {
+    "function": "MARKET_STATUS",
+    "description": "This API returns the current market status (open, closed, or upcoming) for a global stock exchange of your choice.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The API function of your choice. In this case, function=MARKET_STATUS"
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=MARKET_STATUS&apikey=demo"
+    ]
+  },
+  {
+    "function": "REALTIME_OPTIONS",
+    "description": "This API returns realtime US options data with full market coverage. Option chains are sorted by expiration dates in chronological order. Within the same expiration date, contracts are sorted by strike prices from low to high.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The time series of your choice. In this case, function=REALTIME_OPTIONS"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the equity of your choice. For example: symbol=IBM"
+      },
+      "contract": {
+        "required": false,
+        "description": "The US options contract ID you would like to specify. By default, the contract parameter is not set and the entire option chain for a given symbol will be returned."
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the options data in JSON format; csv returns the data as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=REALTIME_OPTIONS&symbol=IBM&apikey=demo"
+    ]
+  },
+  {
+    "function": "HISTORICAL_OPTIONS",
+    "description": "This API returns the full historical options chain for a specific symbol on a specific date, covering 15+ years of history. Implied volatility (IV) and common Greeks (e.g., delta, gamma, theta, vega, rho) are also returned. Option chains are sorted by expiration dates in chronological order. Within the same expiration date, contracts are sorted by strike prices from low to high.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The time series of your choice. In this case, function=HISTORICAL_OPTIONS"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the equity of your choice. For example: symbol=IBM"
+      },
+      "date": {
+        "required": false,
+        "description": "By default, the date parameter is not set and the API will return data for the previous trading session. Any date later than 2008-01-01 is accepted. For example, date=2017-11-15."
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the options data in JSON format; csv returns the data as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=HISTORICAL_OPTIONS&symbol=IBM&apikey=demo",
+      "https://www.alphavantage.co/query?function=HISTORICAL_OPTIONS&symbol=IBM&date=2017-11-15&apikey=demo",
+      "https://www.alphavantage.co/query?function=HISTORICAL_OPTIONS&symbol=IBM&date=2017-11-15&apikey=demo&datatype=csv"
+    ]
+  },
+  {
+    "function": "NEWS_SENTIMENT",
+    "description": "This API returns live and historical market news & sentiment data from a large & growing selection of premier news outlets around the world, covering stocks, cryptocurrencies, forex, and a wide range of topics such as fiscal policy, mergers & acquisitions, IPOs, etc.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The function of your choice. In this case, function=NEWS_SENTIMENT"
+      },
+      "tickers": {
+        "required": false,
+        "description": "The stock/crypto/forex symbols of your choice. For example: tickers=IBM will filter for articles that mention the IBM ticker; tickers=COIN,CRYPTO:BTC,FOREX:USD will filter for articles that simultaneously mention Coinbase (COIN), Bitcoin (CRYPTO:BTC), and US Dollar (FOREX:USD) in their content."
+      },
+      "topics": {
+        "required": false,
+        "description": "The news topics of your choice. For example: topics=technology will filter for articles that write about the technology sector; topics=technology,ipo will filter for articles that simultaneously cover technology and IPO in their content."
+      },
+      "time_from": {
+        "required": false,
+        "description": "The time range of the news articles you are targeting, in YYYYMMDDTHHMM format. For example: time_from=20220410T0139. If time_from is specified but time_to is missing, the API will return articles published between the time_from value and the current time."
+      },
+      "time_to": {
+        "required": false,
+        "description": "The end time of the news articles you are targeting, in YYYYMMDDTHHMM format. If time_to is specified, the API will return articles published between the time_from value and the time_to value."
+      },
+      "sort": {
+        "required": false,
+        "description": "By default, sort=LATEST and the API will return the latest articles first. You can also set sort=EARLIEST or sort=RELEVANCE based on your use case."
+      },
+      "limit": {
+        "required": false,
+        "description": "By default, limit=50 and the API will return up to 50 matching results. You can also set limit=1000 to output up to 1000 results."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=NEWS_SENTIMENT&tickers=AAPL&apikey=demo",
+      "https://www.alphavantage.co/query?function=NEWS_SENTIMENT&tickers=COIN,CRYPTO:BTC,FOREX:USD&time_from=20220410T0130&limit=1000&apikey=demo"
+    ]
+  },
+  {
+    "function": "TOP_GAINERS_LOSERS",
+    "description": "This endpoint returns the top 20 gainers, losers, and the most active traded tickers in the US market.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The API function of your choice. In this case, function=TOP_GAINERS_LOSERS"
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=TOP_GAINERS_LOSERS&apikey=demo"
+    ]
+  },
+  {
+    "function": "INSIDER_TRANSACTIONS",
+    "description": "This API returns the latest and historical insider transactions made by key stakeholders (e.g., founders, executives, board members, etc.) of a specific company.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The function of your choice. In this case, function=INSIDER_TRANSACTIONS"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The symbol of the ticker of your choice. For example: symbol=IBM."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=INSIDER_TRANSACTIONS&symbol=IBM&apikey=demo"
+    ]
+  },
+  {
+    "function": "ANALYTICS_FIXED_WINDOW",
+    "description": "This endpoint returns a rich set of advanced analytics metrics (e.g., total return, variance, autocorrelation, etc.) for a given time series over a fixed temporal window.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The function of your choice. In this case, function=ANALYTICS_FIXED_WINDOW"
+      },
+      "symbols": {
+        "required": true,
+        "description": "A list of symbols for the calculation. It can be a comma separated list of symbols as a string. Free API keys can specify up to 5 symbols per API request. Premium API keys can specify up to 50 symbols per API request."
+      },
+      "range": {
+        "required": true,
+        "description": "The date range for the series being requested. By default, the date range is the full set of data for the equity history. This can be further modified by the LIMIT variable."
+      },
+      "oHLC": {
+        "required": false,
+        "description": "This allows you to choose which open, high, low, or close field the calculation will be performed on. By default, oHLC=close. Valid values for these fields are open, high, low, close."
+      },
+      "interval": {
+        "required": true,
+        "description": "Time interval between two consecutive data points in the time series. The following values are supported: 1min, 5min, 15min, 30min, 60min, DAILY, WEEKLY, MONTHLY."
+      },
+      "calculations": {
+        "required": true,
+        "description": "A comma separated list of the analytics metrics you would like to calculate: MIN, MAX, MEAN, MEDIAN, CUMULATIVE_RETURN, VARIANCE, STDDEV, MAX_DRAWDOWN, HISTOGRAM, AUTOCOHRELATION, COVARIANCE, CORRELATION."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=ANALYTICS_FIXED_WINDOW&symbols=AAPL,MSFT,IBM&range=2023-07-01&range=2023-08-31&interval=DAILY&oHLC=close&calculations=MEAN,STDDEV,CORRELATION&apikey=demo"
+    ]
+  },
+  {
+    "function": "ANALYTICS_SLIDING_WINDOW",
+    "description": "This endpoint returns a rich set of advanced analytics metrics (e.g., total return, variance, autocorrelation, etc.) for a given time series over sliding time windows.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The function of your choice. In this case, function=ANALYTICS_SLIDING_WINDOW"
+      },
+      "symbols": {
+        "required": true,
+        "description": "A list of symbols for the calculation. It can be a comma separated list of symbols as a string. Free API keys can specify up to 5 symbols per API request. Premium API keys can specify up to 50 symbols per API request."
+      },
+      "range": {
+        "required": true,
+        "description": "The date range for the series being requested. By default, the date range is the full set of data for the equity history. This can be further modified by the LIMIT variable."
+      },
+      "oHLC": {
+        "required": false,
+        "description": "This allows you to choose which open, high, low, or close field the calculation will be performed on. By default, oHLC=close. Valid values for these fields are open, high, low, close."
+      },
+      "interval": {
+        "required": true,
+        "description": "Time interval between two consecutive data points in the time series. The following values are supported: 1min, 5min, 15min, 30min, 60min, DAILY, WEEKLY, MONTHLY."
+      },
+      "window_size": {
+        "required": true,
+        "description": "An integer representing the size of the moving window. A hard lower boundary of 10 has been set though it is recommended to make this window larger to make sure the running calculations are statistically significant."
+      },
+      "calculations": {
+        "required": true,
+        "description": "A comma separated list of the analytics metrics you would like to calculate. Free API keys can specify 1 metric to be calculated per API request. Premium API keys can specify multiple metrics to be calculated simultaneously per API request."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=ANALYTICS_SLIDING_WINDOW&symbols=AAPL,IBM&range=2month&interval=DAILY&oHLC=close&window_size=20&calculations=MEAN,STDDEV(annualized=true)&apikey=demo"
+    ]
+  },
+  {
+    "function": "OVERVIEW",
+    "description": "This API returns the company information, financial ratios, and other key metrics for the equity specified. Data is generally refreshed on the same day a company reports its latest earnings and financials.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The function of your choice. In this case, function=OVERVIEW"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The symbol of the ticker of your choice. For example: symbol=IBM."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=OVERVIEW&symbol=IBM&apikey=demo"
+    ]
+  },
+  {
+    "function": "ETF_PROFILE",
+    "description": "This API returns key ETF metrics (e.g., net assets, expense ratio, and turnover), along with the corresponding ETF holdings / constituents with allocation by asset types and sectors.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The function of your choice. In this case, function=ETF_PROFILE"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The symbol of the ticker of your choice. For example: symbol=QQQ."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=ETF_PROFILE&symbol=QQQ&apikey=demo"
+    ]
+  },
+  {
+    "function": "DIVIDENDS",
+    "description": "This API returns historical and future (declared) dividend distributions.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The function of your choice. In this case, function=DIVIDENDS"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The symbol of the ticker of your choice. For example: symbol=IBM."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=DIVIDENDS&symbol=IBM&apikey=demo"
+    ]
+  },
+  {
+    "function": "SPLITS",
+    "description": "This API returns historical split events.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The function of your choice. In this case, function=SPLITS"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The symbol of the ticker of your choice. For example: symbol=IBM."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=SPLITS&symbol=IBM&apikey=demo"
+    ]
+  },
+  {
+    "function": "INCOME_STATEMENT",
+    "description": "This API returns the annual and quarterly income statements for the company of interest, with normalized fields mapped to GAAP and IFRS taxonomies of the SEC. Data is generally refreshed on the same day a company reports its latest earnings and financials.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The function of your choice. In this case, function=INCOME_STATEMENT"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The symbol of the ticker of your choice. For example: symbol=IBM."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=INCOME_STATEMENT&symbol=IBM&apikey=demo"
+    ]
+  },
+  {
+    "function": "BALANCE_SHEET",
+    "description": "This API returns the annual and quarterly balance sheets for the company of interest, with normalized fields mapped to GAAP and IFRS taxonomies of the SEC. Data is generally refreshed on the same day a company reports its latest earnings and financials.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The function of your choice. In this case, function=BALANCE_SHEET"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The symbol of the ticker of your choice. For example: symbol=IBM."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=BALANCE_SHEET&symbol=IBM&apikey=demo"
+    ]
+  },
+  {
+    "function": "CASH_FLOW",
+    "description": "This API returns the annual and quarterly cash flow for the company of interest, with normalized fields mapped to GAAP and IFRS taxonomies of the SEC. Data is generally refreshed on the same day a company reports its latest earnings and financials.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The function of your choice. In this case, function=CASH_FLOW"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The symbol of the ticker of your choice. For example: symbol=IBM."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=CASH_FLOW&symbol=IBM&apikey=demo"
+    ]
+  },
+  {
+    "function": "EARNINGS",
+    "description": "This API returns the annual and quarterly earnings (EPS) for the company of interest. Quarterly data also includes analyst estimates and surprise metrics.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The function of your choice. In this case, function=EARNINGS"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The symbol of the ticker of your choice. For example: symbol=IBM."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=EARNINGS&symbol=IBM&apikey=demo"
+    ]
+  },
+  {
+    "function": "LISTING_STATUS",
+    "description": "This API returns a list of active or delisted US stocks and ETFs, either as of the latest trading day or at a specific time in history.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The API function of your choice. In this case, function=LISTING_STATUS"
+      },
+      "date": {
+        "required": false,
+        "description": "If no date is set, the API endpoint will return a list of active or delisted symbols as of the latest trading day. If a date is set, the API endpoint will 'travel back' in time and return a list of active or delisted symbols on that particular date in history. Any YYYY-MM-DD date later than 2010-01-01 is supported. For example, date=2013-08-03."
+      },
+      "state": {
+        "required": false,
+        "description": "By default, state=active and the API will return a list of actively traded stocks and ETFs. Set state=delisted to query a list of delisted assets."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=LISTING_STATUS&apikey=demo",
+      "https://www.alphavantage.co/query?function=LISTING_STATUS&date=2014-07-10&state=delisted&apikey=demo"
+    ]
+  },
+  {
+    "function": "EARNINGS_CALENDAR",
+    "description": "This API returns the earnings calendar for a company or the broader market.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The function of your choice. In this case, function=EARNINGS_CALENDAR"
+      },
+      "horizon": {
+        "required": false,
+        "description": "The time horizon for the earnings calendar. For example, horizon=3month."
+      },
+      "symbol": {
+        "required": false,
+        "description": "The symbol of the ticker of your choice. For example: symbol=IBM."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=EARNINGS_CALENDAR&horizon=3month&apikey=demo",
+      "https://www.alphavantage.co/query?function=EARNINGS_CALENDAR&symbol=IBM&horizon=12month&apikey=demo"
+    ]
+  },
+  {
+    "function": "CURRENCY_EXCHANGE_RATE",
+    "description": "This API returns the realtime exchange rate for any pair of digital currency (e.g., Bitcoin) or physical currency (e.g., USD).",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The function of your choice. In this case, function=CURRENCY_EXCHANGE_RATE"
+      },
+      "from_currency": {
+        "required": true,
+        "description": "The currency you would like to get the exchange rate for. It can either be a physical currency or digital/crypto currency. For example: from_currency=USD or from_currency=BTC."
+      },
+      "to_currency": {
+        "required": true,
+        "description": "The destination currency for the exchange rate. It can either be a physical currency or digital/crypto currency. For example: to_currency=USD or to_currency=BTC."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=USD&to_currency=JPY&apikey=demo",
+      "https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=BTC&to_currency=EUR&apikey=demo"
+    ]
+  },
+  {
+    "function": "CRYPTO_INTRADAY",
+    "description": "This API returns intraday time series (timestamp, open, high, low, close, volume) of the cryptocurrency specified, updated realtime.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The time series of your choice. In this case, function=CRYPTO_INTRADAY"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The digital/crypto currency of your choice. It can be any of the currencies in the digital currency list. For example: symbol=ETH."
+      },
+      "market": {
+        "required": true,
+        "description": "The exchange market of your choice. It can be any of the market in the market list. For example: market=USD."
+      },
+      "interval": {
+        "required": true,
+        "description": "Time interval between two consecutive data points in the time series. The following values are supported: 1min, 5min, 15min, 30min, 60min"
+      },
+      "outputsize": {
+        "required": false,
+        "description": "By default, outputsize=compact. Strings compact and full are accepted with the following specifications: compact returns only the latest 100 data points in the intraday time series; full returns the full-length intraday time series."
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the intraday time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=CRYPTO_INTRADAY&symbol=ETH&market=USD&interval=5min&apikey=demo",
+      "https://www.alphavantage.co/query?function=CRYPTO_INTRADAY&symbol=ETH&market=USD&interval=5min&outputsize=full&apikey=demo",
+      "https://www.alphavantage.co/query?function=CRYPTO_INTRADAY&symbol=ETH&market=USD&interval=5min&apikey=demo&datatype=csv"
+    ]
+  },
+  {
+    "function": "DIGITAL_CURRENCY_DAILY",
+    "description": "This API returns the daily historical time series for a digital currency (e.g., BTC) traded on a specific market (e.g., EUR/Euro), refreshed daily at midnight (UTC). Prices and volumes are quoted in both the market-specific currency and USD.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The time series of your choice. In this case, function=DIGITAL_CURRENCY_DAILY"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The digital/crypto currency of your choice. It can be any of the currencies in the digital currency list. For example: symbol=BTC."
+      },
+      "market": {
+        "required": true,
+        "description": "The exchange market of your choice. It can be any of the market in the market list. For example: market=EUR."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_DAILY&symbol=BTC&market=EUR&apikey=demo"
+    ]
+  },
+  {
+    "function": "DIGITAL_CURRENCY_WEEKLY",
+    "description": "This API returns the weekly historical time series for a digital currency (e.g., BTC) traded on a specific market (e.g., EUR/Euro), refreshed daily at midnight (UTC). Prices and volumes are quoted in both the market-specific currency and USD.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The time series of your choice. In this case, function=DIGITAL_CURRENCY_WEEKLY"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The digital/crypto currency of your choice. It can be any of the currencies in the digital currency list. For example: symbol=BTC."
+      },
+      "market": {
+        "required": true,
+        "description": "The exchange market of your choice. It can be any of the market in the market list. For example: market=EUR."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_WEEKLY&symbol=BTC&market=EUR&apikey=demo"
+    ]
+  },
+  {
+    "function": "DIGITAL_CURRENCY_MONTHLY",
+    "description": "This API returns the monthly historical time series for a digital currency (e.g., BTC) traded on a specific market (e.g., EUR/Euro), refreshed daily at midnight (UTC). Prices and volumes are quoted in both the market-specific currency and USD.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The time series of your choice. In this case, function=DIGITAL_CURRENCY_MONTHLY"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The digital/crypto currency of your choice. It can be any of the currencies in the digital currency list. For example: symbol=BTC."
+      },
+      "market": {
+        "required": true,
+        "description": "The exchange market of your choice. It can be any of the market in the market list. For example: market=EUR."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_MONTHLY&symbol=BTC&market=EUR&apikey=demo"
+    ]
+  },
+  {
+    "function": "CURRENCY_EXCHANGE_RATE",
+    "description": "This API returns the realtime exchange rate for a pair of digital currency (e.g., Bitcoin) and physical currency (e.g., USD).",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The function of your choice. In this case, function=CURRENCY_EXCHANGE_RATE"
+      },
+      "from_currency": {
+        "required": true,
+        "description": "The currency you would like to get the exchange rate for. It can either be a physical currency or digital/crypto currency. For example: from_currency=USD or from_currency=BTC."
+      },
+      "to_currency": {
+        "required": true,
+        "description": "The destination currency for the exchange rate. It can either be a physical currency or digital/crypto currency. For example: to_currency=USD or to_currency=BTC."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=USD&to_currency=JPY&apikey=demo",
+      "https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=BTC&to_currency=EUR&apikey=demo"
+    ]
+  },
+  {
+    "function": "FX_INTRADAY",
+    "description": "This API returns intraday time series (timestamp, open, high, low, close) of the FX currency pair specified, updated realtime.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The time series of your choice. In this case, function=FX_INTRADAY"
+      },
+      "from_symbol": {
+        "required": true,
+        "description": "A three-letter symbol from the forex currency list. For example: from_symbol=EUR"
+      },
+      "to_symbol": {
+        "required": true,
+        "description": "A three-letter symbol from the forex currency list. For example: to_symbol=USD"
+      },
+      "interval": {
+        "required": true,
+        "description": "Time interval between two consecutive data points in the time series. The following values are supported: 1min, 5min, 15min, 30min, 60min"
+      },
+      "outputsize": {
+        "required": false,
+        "description": "By default, outputsize=compact. Strings compact and full are accepted with the following specifications: compact returns only the latest 100 data points in the intraday time series; full returns the full-length intraday time series."
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the intraday time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=FX_INTRADAY&from_symbol=EUR&to_symbol=USD&interval=5min&apikey=demo",
+      "https://www.alphavantage.co/query?function=FX_INTRADAY&from_symbol=EUR&to_symbol=USD&interval=5min&apikey=demo&datatype=csv"
+    ]
+  },
+  {
+    "function": "FX_DAILY",
+    "description": "This API returns the daily time series (timestamp, open, high, low, close) of the FX currency pair specified, updated realtime.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The time series of your choice. In this case, function=FX_DAILY"
+      },
+      "from_symbol": {
+        "required": true,
+        "description": "A three-letter symbol from the forex currency list. For example: from_symbol=EUR"
+      },
+      "to_symbol": {
+        "required": true,
+        "description": "A three-letter symbol from the forex currency list. For example: to_symbol=USD"
+      },
+      "outputsize": {
+        "required": false,
+        "description": "By default, outputsize=compact. Strings compact and full are accepted with the following specifications: compact returns only the latest 100 data points in the daily time series; full returns the full-length daily time series."
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the daily time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=FX_DAILY&from_symbol=EUR&to_symbol=USD&apikey=demo",
+      "https://www.alphavantage.co/query?function=FX_DAILY&from_symbol=EUR&to_symbol=USD&outputsize=full&apikey=demo",
+      "https://www.alphavantage.co/query?function=FX_DAILY&from_symbol=EUR&to_symbol=USD&apikey=demo&datatype=csv"
+    ]
+  },
+  {
+    "function": "FX_WEEKLY",
+    "description": "This API returns the weekly time series (timestamp, open, high, low, close) of the FX currency pair specified, updated realtime.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The time series of your choice. In this case, function=FX_WEEKLY"
+      },
+      "from_symbol": {
+        "required": true,
+        "description": "A three-letter symbol from the forex currency list. For example: from_symbol=EUR"
+      },
+      "to_symbol": {
+        "required": true,
+        "description": "A three-letter symbol from the forex currency list. For example: to_symbol=USD"
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the weekly time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=FX_WEEKLY&from_symbol=EUR&to_symbol=USD&apikey=demo",
+      "https://www.alphavantage.co/query?function=FX_WEEKLY&from_symbol=EUR&to_symbol=USD&apikey=demo&datatype=csv"
+    ]
+  },
+  {
+    "function": "BRENT",
+    "description": "This API returns the Brent (Europe) crude oil prices in daily, weekly, and monthly horizons.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The function of your choice. In this case, function=BRENT"
+      },
+      "interval": {
+        "required": false,
+        "description": "By default, interval=monthly. Strings daily, weekly, and monthly are accepted."
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=BRENT&interval=monthly&apikey=demo"
+    ]
+  },
+  {
+    "function": "NATURAL_GAS",
+    "description": "This API returns the Henry Hub natural gas spot prices in daily, weekly, and monthly horizons.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The function of your choice. In this case, function=NATURAL_GAS"
+      },
+      "interval": {
+        "required": false,
+        "description": "By default, interval=monthly. Strings daily, weekly, and monthly are accepted."
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=NATURAL_GAS&interval=monthly&apikey=demo"
+    ]
+  },
+  {
+    "function": "COPPER",
+    "description": "This API returns the global price of copper in monthly, quarterly, and annual horizons.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The function of your choice. In this case, function=COPPER"
+      },
+      "interval": {
+        "required": false,
+        "description": "By default, interval=monthly. Strings monthly, quarterly, and annual are accepted."
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=COPPER&interval=monthly&apikey=demo"
+    ]
+  },
+  {
+    "function": "ALUMINUM",
+    "description": "This API returns the global price of aluminum in monthly, quarterly, and annual horizons.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The function of your choice. In this case, function=ALUMINUM"
+      },
+      "interval": {
+        "required": false,
+        "description": "By default, interval=monthly. Strings monthly, quarterly, and annual are accepted."
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=ALUMINUM&interval=monthly&apikey=demo"
+    ]
+  },
+  {
+    "function": "WHEAT",
+    "description": "This API returns the global price of wheat in monthly, quarterly, and annual horizons.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The function of your choice. In this case, function=WHEAT"
+      },
+      "interval": {
+        "required": false,
+        "description": "By default, interval=monthly. Strings monthly, quarterly, and annual are accepted."
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=WHEAT&interval=monthly&apikey=demo"
+    ]
+  },
+  {
+    "function": "CORN",
+    "description": "This API returns the global price of corn in monthly, quarterly, and annual horizons.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The function of your choice. In this case, function=CORN"
+      },
+      "interval": {
+        "required": false,
+        "description": "By default, interval=monthly. Strings monthly, quarterly, and annual are accepted."
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=CORN&interval=monthly&apikey=demo"
+    ]
+  },
+  {
+    "function": "COTTON",
+    "description": "This API returns the global price of cotton in monthly, quarterly, and annual horizons.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The function of your choice. In this case, function=COTTON"
+      },
+      "interval": {
+        "required": false,
+        "description": "By default, interval=monthly. Strings monthly, quarterly, and annual are accepted."
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=COTTON&interval=monthly&apikey=demo"
+    ]
+  },
+  {
+    "function": "SUGAR",
+    "description": "This API returns the global price of sugar in monthly, quarterly, and annual horizons.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The function of your choice. In this case, function=SUGAR"
+      },
+      "interval": {
+        "required": false,
+        "description": "By default, interval=monthly. Strings monthly, quarterly, and annual are accepted."
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=SUGAR&interval=monthly&apikey=demo"
+    ]
+  },
+  {
+    "function": "COFFEE",
+    "description": "This API returns the global price of coffee in monthly, quarterly, and annual horizons.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The function of your choice. In this case, function=COFFEE"
+      },
+      "interval": {
+        "required": false,
+        "description": "By default, interval=monthly. Strings monthly, quarterly, and annual are accepted."
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=COFFEE&interval=monthly&apikey=demo"
+    ]
+  },
+  {
+    "function": "ALL_COMMODITIES",
+    "description": "This API returns the global price index of all commodities in monthly, quarterly, and annual temporal dimensions.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The function of your choice. In this case, function=ALL_COMMODITIES"
+      },
+      "interval": {
+        "required": false,
+        "description": "By default, interval=monthly. Strings monthly, quarterly, and annual are accepted."
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=ALL_COMMODITIES&interval=monthly&apikey=demo"
+    ]
+  },
+  {
+    "function": "REAL_GDP",
+    "description": "This API returns the annual and quarterly Real GDP of the United States.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The function of your choice. In this case, function=REAL_GDP"
+      },
+      "interval": {
+        "required": false,
+        "description": "By default, interval=annual. Strings quarterly and annual are accepted."
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=REAL_GDP&interval=annual&apikey=demo"
+    ]
+  },
+  {
+    "function": "REAL_GDP_PER_CAPITA",
+    "description": "This API returns the quarterly Real GDP per Capita data of the United States.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The function of your choice. In this case, function=REAL_GDP_PER_CAPITA"
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=REAL_GDP_PER_CAPITA&apikey=demo"
+    ]
+  },
+  {
+    "function": "TREASURY_YIELD",
+    "description": "This API returns the daily, weekly, and monthly US treasury yield of a given maturity timeline (e.g., 5 year, 30 year, etc).",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The function of your choice. In this case, function=TREASURY_YIELD"
+      },
+      "interval": {
+        "required": false,
+        "description": "By default, interval=monthly. Strings daily, weekly, and monthly are accepted."
+      },
+      "maturity": {
+        "required": false,
+        "description": "By default, maturity=10year. Strings 3month, 2year, 5year, 7year, 10year, and 30year are accepted."
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=TREASURY_YIELD&interval=monthly&maturity=10year&apikey=demo"
+    ]
+  },
+  {
+    "function": "FEDERAL_FUNDS_RATE",
+    "description": "This API returns the daily, weekly, and monthly federal funds rate (interest rate) of the United States.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The function of your choice. In this case, function=FEDERAL_FUNDS_RATE"
+      },
+      "interval": {
+        "required": false,
+        "description": "By default, interval=monthly. Strings daily, weekly, and monthly are accepted."
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=FEDERAL_FUNDS_RATE&interval=monthly&apikey=demo"
+    ]
+  },
+  {
+    "function": "CPI",
+    "description": "This API returns the monthly and semiannual consumer price index (CPI) of the United States. CPI is widely regarded as the barometer of inflation levels in the broader economy.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The function of your choice. In this case, function=CPI"
+      },
+      "interval": {
+        "required": false,
+        "description": "By default, interval=monthly. Strings monthly and semiannual are accepted."
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=CPI&interval=monthly&apikey=demo"
+    ]
+  },
+  {
+    "function": "INFLATION",
+    "description": "This API returns the annual inflation rates (consumer prices) of the United States.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The function of your choice. In this case, function=INFLATION"
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=INFLATION&apikey=demo"
+    ]
+  },
+  {
+    "function": "RETAIL_SALES",
+    "description": "This API returns the monthly Advance Retail Sales: Retail Trade data of the United States.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The function of your choice. In this case, function=RETAIL_SALES"
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=RETAIL_SALES&apikey=demo"
+    ]
+  },
+  {
+    "function": "DURABLES",
+    "description": "This API returns the monthly manufacturers' new orders of durable goods in the United States.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The function of your choice. In this case, function=DURABLES"
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=DURABLES&apikey=demo"
+    ]
+  },
+  {
+    "function": "UNEMPLOYMENT",
+    "description": "This API returns the monthly unemployment rate of the United States.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The function of your choice. In this case, function=UNEMPLOYMENT"
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=UNEMPLOYMENT&apikey=demo"
+    ]
+  },
+  {
+    "function": "NONFARM_PAYROLL",
+    "description": "This API returns the monthly US All Employees: Total Nonfarm (commonly known as Total Nonfarm Payroll), a measure of the number of U.S. workers in the economy that excludes proprietors, private household employees, unpaid volunteers, farm employees, and the unincorporated self-employed.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The function of your choice. In this case, function=NONFARM_PAYROLL"
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=NONFARM_PAYROLL&apikey=demo"
+    ]
+  },
+  {
+    "function": "SMA",
+    "description": "This API returns the simple moving average (SMA) values.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The technical indicator of your choice. In this case, function=SMA"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the ticker of your choice. For example: symbol=IBM"
+      },
+      "interval": {
+        "required": true,
+        "description": "Time interval between two consecutive data points in the time series. The following values are supported: 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly"
+      },
+      "time_period": {
+        "required": true,
+        "description": "Number of data points used to calculate each moving average value. Positive integers are accepted (e.g., time_period=60, time_period=200)"
+      },
+      "series_type": {
+        "required": true,
+        "description": "The desired price type in the time series. Four types are supported: close, open, high, low"
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the daily time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=SMA&symbol=IBM&interval=weekly&time_period=10&series_type=open&apikey=demo"
+    ]
+  },
+  {
+    "function": "EMA",
+    "description": "This API returns the exponential moving average (EMA) values.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The technical indicator of your choice. In this case, function=EMA"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the ticker of your choice. For example: symbol=IBM"
+      },
+      "interval": {
+        "required": true,
+        "description": "Time interval between two consecutive data points in the time series. The following values are supported: 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly"
+      },
+      "time_period": {
+        "required": true,
+        "description": "Number of data points used to calculate each moving average value. Positive integers are accepted (e.g., time_period=60, time_period=200)"
+      },
+      "series_type": {
+        "required": true,
+        "description": "The desired price type in the time series. Four types are supported: close, open, high, low"
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the daily time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=EMA&symbol=IBM&interval=weekly&time_period=10&series_type=open&apikey=demo"
+    ]
+  },
+  {
+    "function": "WMA",
+    "description": "This API returns the weighted moving average (WMA) values.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The technical indicator of your choice. In this case, function=WMA"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the ticker of your choice. For example: symbol=IBM"
+      },
+      "interval": {
+        "required": true,
+        "description": "Time interval between two consecutive data points in the time series. The following values are supported: 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly"
+      },
+      "time_period": {
+        "required": true,
+        "description": "Number of data points used to calculate each moving average value. Positive integers are accepted (e.g., time_period=60, time_period=200)"
+      },
+      "series_type": {
+        "required": true,
+        "description": "The desired price type in the time series. Four types are supported: close, open, high, low"
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the daily time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=WMA&symbol=IBM&interval=weekly&time_period=10&series_type=open&apikey=demo"
+    ]
+  },
+  {
+    "function": "DEMA",
+    "description": "This API returns the double exponential moving average (DEMA) values.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The technical indicator of your choice. In this case, function=DEMA"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the ticker of your choice. For example: symbol=IBM"
+      },
+      "interval": {
+        "required": true,
+        "description": "Time interval between two consecutive data points in the time series. The following values are supported: 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly"
+      },
+      "time_period": {
+        "required": true,
+        "description": "Number of data points used to calculate each moving average value. Positive integers are accepted (e.g., time_period=60, time_period=200)"
+      },
+      "series_type": {
+        "required": true,
+        "description": "The desired price type in the time series. Four types are supported: close, open, high, low"
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the daily time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=DEMA&symbol=IBM&interval=weekly&time_period=10&series_type=open&apikey=demo"
+    ]
+  },
+  {
+    "function": "TEMA",
+    "description": "This API returns the triple exponential moving average (TEMA) values.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The technical indicator of your choice. In this case, function=TEMA"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the ticker of your choice. For example: symbol=IBM"
+      },
+      "interval": {
+        "required": true,
+        "description": "Time interval between two consecutive data points in the time series. The following values are supported: 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly"
+      },
+      "time_period": {
+        "required": true,
+        "description": "Number of data points used to calculate each moving average value. Positive integers are accepted (e.g., time_period=60, time_period=200)"
+      },
+      "series_type": {
+        "required": true,
+        "description": "The desired price type in the time series. Four types are supported: close, open, high, low"
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the daily time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=TEMA&symbol=IBM&interval=weekly&time_period=10&series_type=open&apikey=demo"
+    ]
+  },
+  {
+    "function": "TRIMA",
+    "description": "This API returns the triangular moving average (TRIMA) values.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The technical indicator of your choice. In this case, function=TRIMA"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the ticker of your choice. For example: symbol=IBM"
+      },
+      "interval": {
+        "required": true,
+        "description": "Time interval between two consecutive data points in the time series. The following values are supported: 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly"
+      },
+      "time_period": {
+        "required": true,
+        "description": "Number of data points used to calculate each moving average value. Positive integers are accepted (e.g., time_period=60, time_period=200)"
+      },
+      "series_type": {
+        "required": true,
+        "description": "The desired price type in the time series. Four types are supported: close, open, high, low"
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the daily time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=TRIMA&symbol=IBM&interval=weekly&time_period=10&series_type=open&apikey=demo"
+    ]
+  },
+  {
+    "function": "KAMA",
+    "description": "This API returns the Kaufman adaptive moving average (KAMA) values.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The technical indicator of your choice. In this case, function=KAMA"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the ticker of your choice. For example: symbol=IBM"
+      },
+      "interval": {
+        "required": true,
+        "description": "Time interval between two consecutive data points in the time series. The following values are supported: 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly"
+      },
+      "time_period": {
+        "required": true,
+        "description": "Number of data points used to calculate each moving average value. Positive integers are accepted (e.g., time_period=60, time_period=200)"
+      },
+      "series_type": {
+        "required": true,
+        "description": "The desired price type in the time series. Four types are supported: close, open, high, low"
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the daily time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=KAMA&symbol=IBM&interval=weekly&time_period=10&series_type=open&apikey=demo"
+    ]
+  },
+  {
+    "function": "MAMA",
+    "description": "This API returns the MESA adaptive moving average (MAMA) values.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The technical indicator of your choice. In this case, function=MAMA"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the ticker of your choice. For example: symbol=IBM"
+      },
+      "interval": {
+        "required": true,
+        "description": "Time interval between two consecutive data points in the time series. The following values are supported: 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly"
+      },
+      "series_type": {
+        "required": true,
+        "description": "The desired price type in the time series. Four types are supported: close, open, high, low"
+      },
+      "fastlimit": {
+        "required": true,
+        "description": "The scaled value of the fastest EMA in the MAMA calculation."
+      },
+      "slowlimit": {
+        "required": true,
+        "description": "The scaled value of the slowest EMA in the MAMA calculation."
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the daily time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=MAMA&symbol=IBM&interval=weekly&series_type=open&fastlimit=0.5&slowlimit=0.05&apikey=demo"
+    ]
+  },
+  {
+    "function": "T3",
+    "description": "This API returns the triangular moving average (T3) values.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The technical indicator of your choice. In this case, function=T3"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the ticker of your choice. For example: symbol=IBM"
+      },
+      "interval": {
+        "required": true,
+        "description": "Time interval between two consecutive data points in the time series. The following values are supported: 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly"
+      },
+      "time_period": {
+        "required": true,
+        "description": "Number of data points used to calculate each moving average value. Positive integers are accepted (e.g., time_period=60, time_period=200)"
+      },
+      "series_type": {
+        "required": true,
+        "description": "The desired price type in the time series. Four types are supported: close, open, high, low"
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the daily time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=T3&symbol=IBM&interval=weekly&time_period=10&series_type=open&apikey=demo"
+    ]
+  },
+  {
+    "function": "ADX",
+    "description": "This API returns the average directional movement index (ADX) values.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The technical indicator of your choice. In this case, function=ADX"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the ticker of your choice. For example: symbol=IBM"
+      },
+      "interval": {
+        "required": true,
+        "description": "Time interval between two consecutive data points in the time series. The following values are supported: 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly"
+      },
+      "time_period": {
+        "required": true,
+        "description": "Number of data points used to calculate each moving average value. Positive integers are accepted (e.g., time_period=60, time_period=200)"
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the daily time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=ADX&symbol=IBM&interval=weekly&time_period=10&apikey=demo"
+    ]
+  },
+  {
+    "function": "ADXR",
+    "description": "This API returns the average directional movement index rating (ADXR) values.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The technical indicator of your choice. In this case, function=ADXR"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the ticker of your choice. For example: symbol=IBM"
+      },
+      "interval": {
+        "required": true,
+        "description": "Time interval between two consecutive data points in the time series. The following values are supported: 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly"
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the daily time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=ADXR&symbol=IBM&interval=weekly&apikey=demo"
+    ]
+  },
+  {
+    "function": "APO",
+    "description": "This API returns the absolute price oscillator (APO) values.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The technical indicator of your choice. In this case, function=APO"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the ticker of your choice. For example: symbol=IBM"
+      },
+      "interval": {
+        "required": true,
+        "description": "Time interval between two consecutive data points in the time series. The following values are supported: 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly"
+      },
+      "series_type": {
+        "required": true,
+        "description": "The desired price type in the time series. Four types are supported: close, open, high, low"
+      },
+      "fastperiod": {
+        "required": true,
+        "description": "The time period for the fast EMA in the APO calculation."
+      },
+      "slowperiod": {
+        "required": true,
+        "description": "The time period for the slow EMA in the APO calculation."
+      },
+      "matype": {
+        "required": true,
+        "description": "The type of moving average used in the APO calculation. Accepted values are SMA, EMA, WMA, DEMA, TEMA, TRIMA, KAMA, MAMA, and T3."
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the daily time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=APO&symbol=IBM&interval=weekly&series_type=close&fastperiod=10&slowperiod=20&matype=SMA&apikey=demo"
+    ]
+  },
+  {
+    "function": "AROON",
+    "description": "This API returns the Aroon indicator values.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The technical indicator of your choice. In this case, function=AROON"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the ticker of your choice. For example: symbol=IBM"
+      },
+      "interval": {
+        "required": true,
+        "description": "Time interval between two consecutive data points in the time series. The following values are supported: 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly"
+      },
+      "time_period": {
+        "required": true,
+        "description": "Number of data points used to calculate each moving average value. Positive integers are accepted (e.g., time_period=60, time_period=200)"
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the daily time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=AROON&symbol=IBM&interval=weekly&time_period=10&apikey=demo"
+    ]
+  },
+  {
+    "function": "AROONOSC",
+    "description": "This API returns the Aroon oscillator values.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The technical indicator of your choice. In this case, function=AROONOSC"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the ticker of your choice. For example: symbol=IBM"
+      },
+      "interval": {
+        "required": true,
+        "description": "Time interval between two consecutive data points in the time series. The following values are supported: 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly"
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the daily time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=AROONOSC&symbol=IBM&interval=weekly&apikey=demo"
+    ]
+  },
+  {
+    "function": "MFI",
+    "description": "This API returns the money flow index (MFI) values.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The technical indicator of your choice. In this case, function=MFI"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the ticker of your choice. For example: symbol=IBM"
+      },
+      "interval": {
+        "required": true,
+        "description": "Time interval between two consecutive data points in the time series. The following values are supported: 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly"
+      },
+      "time_period": {
+        "required": true,
+        "description": "Number of data points used to calculate each moving average value. Positive integers are accepted (e.g., time_period=60, time_period=200)"
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the daily time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=MFI&symbol=IBM&interval=weekly&time_period=10&apikey=demo"
+    ]
+  },
+  {
+    "function": "CCI",
+    "description": "This API returns the commodity channel index (CCI) values.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The technical indicator of your choice. In this case, function=CCI"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the ticker of your choice. For example: symbol=IBM"
+      },
+      "interval": {
+        "required": true,
+        "description": "Time interval between two consecutive data points in the time series. The following values are supported: 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly"
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the daily time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=CCI&symbol=IBM&interval=weekly&apikey=demo"
+    ]
+  },
+  {
+    "function": "BBANDS",
+    "description": "This API returns the Bollinger Bands® values.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The technical indicator of your choice. In this case, function=BBANDS"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the ticker of your choice. For example: symbol=IBM"
+      },
+      "interval": {
+        "required": true,
+        "description": "Time interval between two consecutive data points in the time series. The following values are supported: 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly"
+      },
+      "time_period": {
+        "required": true,
+        "description": "Number of data points used to calculate each moving average value. Positive integers are accepted (e.g., time_period=60, time_period=200)"
+      },
+      "series_type": {
+        "required": true,
+        "description": "The desired price type in the time series. Four types are supported: close, open, high, low"
+      },
+      "nbband": {
+        "required": true,
+        "description": "Number of standard deviations up and down from the n-period moving average to calculate the upper and lower bands."
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the daily time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=BBANDS&symbol=IBM&interval=weekly&time_period=10&series_type=close&nbband=2&apikey=demo"
+    ]
+  },
+  {
+    "function": "MACD",
+    "description": "This API returns the moving average convergence divergence (MACD) values.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The technical indicator of your choice. In this case, function=MACD"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the ticker of your choice. For example: symbol=IBM"
+      },
+      "interval": {
+        "required": true,
+        "description": "Time interval between two consecutive data points in the time series. The following values are supported: 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly"
+      },
+      "series_type": {
+        "required": true,
+        "description": "The desired price type in the time series. Four types are supported: close, open, high, low"
+      },
+      "fastperiod": {
+        "required": true,
+        "description": "The time period for the fast EMA in the MACD calculation."
+      },
+      "slowperiod": {
+        "required": true,
+        "description": "The time period for the slow EMA in the MACD calculation."
+      },
+      "signalperiod": {
+        "required": true,
+        "description": "The time period for the signal line in the MACD calculation."
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the daily time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=MACD&symbol=IBM&interval=weekly&series_type=close&fastperiod=12&slowperiod=26&signalperiod=9&apikey=demo"
+    ]
+  },
+  {
+    "function": "MACDEXT",
+    "description": "This API returns the moving average convergence divergence extended (MACDEXT) values.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The technical indicator of your choice. In this case, function=MACDEXT"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the ticker of your choice. For example: symbol=IBM"
+      },
+      "interval": {
+        "required": true,
+        "description": "Time interval between two consecutive data points in the time series. The following values are supported: 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly"
+      },
+      "series_type": {
+        "required": true,
+        "description": "The desired price type in the time series. Four types are supported: close, open, high, low"
+      },
+      "fastperiod": {
+        "required": true,
+        "description": "The time period for the fast EMA in the MACD calculation."
+      },
+      "slowperiod": {
+        "required": true,
+        "description": "The time period for the slow EMA in the MACD calculation."
+      },
+      "signalperiod": {
+        "required": true,
+        "description": "The time period for the signal line in the MACD calculation."
+      },
+      "fastmatype": {
+        "required": true,
+        "description": "The type of moving average used in the fast EMA calculation. Accepted values are SMA, EMA, WMA, DEMA, TEMA, TRIMA, KAMA, MAMA, and T3."
+      },
+      "slowmatype": {
+        "required": true,
+        "description": "The type of moving average used in the slow EMA calculation. Accepted values are SMA, EMA, WMA, DEMA, TEMA, TRIMA, KAMA, MAMA, and T3."
+      },
+      "signalmatype": {
+        "required": true,
+        "description": "The type of moving average used in the signal line calculation. Accepted values are SMA, EMA, WMA, DEMA, TEMA, TRIMA, KAMA, MAMA, and T3."
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the daily time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=MACDEXT&symbol=IBM&interval=weekly&series_type=close&fastperiod=12&slowperiod=26&signalperiod=9&fastmatype=SMA&slowmatype=SMA&signalmatype=SMA&apikey=demo"
+    ]
+  },
+  {
+    "function": "STOCH",
+    "description": "This API returns the stochastic oscillator values.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The technical indicator of your choice. In this case, function=STOCH"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the ticker of your choice. For example: symbol=IBM"
+      },
+      "interval": {
+        "required": true,
+        "description": "Time interval between two consecutive data points in the time series. The following values are supported: 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly"
+      },
+      "fastkperiod": {
+        "required": true,
+        "description": "The time period for the fast %K line in the stochastic oscillator calculation."
+      },
+      "slowkperiod": {
+        "required": true,
+        "description": "The time period for the slow %K line in the stochastic oscillator calculation."
+      },
+      "slowdperiod": {
+        "required": true,
+        "description": "The time period for the slow %D line in the stochastic oscillator calculation."
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the daily time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=STOCH&symbol=IBM&interval=weekly&fastkperiod=5&slowkperiod=3&slowdperiod=3&apikey=demo"
+    ]
+  },
+  {
+    "function": "STOCHRSI",
+    "description": "This API returns the stochastic relative strength index (STOCHRSI) values.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The technical indicator of your choice. In this case, function=STOCHRSI"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the ticker of your choice. For example: symbol=IBM"
+      },
+      "interval": {
+        "required": true,
+        "description": "Time interval between two consecutive data points in the time series. The following values are supported: 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly"
+      },
+      "time_period": {
+        "required": true,
+        "description": "Number of data points used to calculate each moving average value. Positive integers are accepted (e.g., time_period=60, time_period=200)"
+      },
+      "series_type": {
+        "required": true,
+        "description": "The desired price type in the time series. Four types are supported: close, open, high, low"
+      },
+      "fastkperiod": {
+        "required": true,
+        "description": "The time period for the fast %K line in the stochastic oscillator calculation."
+      },
+      "fastdperiod": {
+        "required": true,
+        "description": "The time period for the fast %D line in the stochastic oscillator calculation."
+      },
+      "slowkperiod": {
+        "required": true,
+        "description": "The time period for the slow %K line in the stochastic oscillator calculation."
+      },
+      "slowdperiod": {
+        "required": true,
+        "description": "The time period for the slow %D line in the stochastic oscillator calculation."
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the daily time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=STOCHRSI&symbol=IBM&interval=weekly&time_period=10&series_type=close&fastkperiod=5&slowkperiod=3&slowdperiod=3&apikey=demo"
+    ]
+  },
+  {
+    "function": "RSI",
+    "description": "This API returns the relative strength index (RSI) values.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The technical indicator of your choice. In this case, function=RSI"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the ticker of your choice. For example: symbol=IBM"
+      },
+      "interval": {
+        "required": true,
+        "description": "Time interval between two consecutive data points in the time series. The following values are supported: 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly"
+      },
+      "time_period": {
+        "required": true,
+        "description": "Number of data points used to calculate each moving average value. Positive integers are accepted (e.g., time_period=60, time_period=200)"
+      },
+      "series_type": {
+        "required": true,
+        "description": "The desired price type in the time series. Four types are supported: close, open, high, low"
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the daily time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=RSI&symbol=IBM&interval=weekly&time_period=10&series_type=close&apikey=demo"
+    ]
+  },
+  {
+    "function": "OBV",
+    "description": "This API returns the on-balance volume (OBV) values.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The technical indicator of your choice. In this case, function=OBV"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the ticker of your choice. For example: symbol=IBM"
+      },
+      "interval": {
+        "required": true,
+        "description": "Time interval between two consecutive data points in the time series. The following values are supported: 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly"
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the daily time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=OBV&symbol=IBM&interval=weekly&apikey=demo"
+    ]
+  },
+  {
+    "function": "ATR",
+    "description": "This API returns the average true range (ATR) values.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The technical indicator of your choice. In this case, function=ATR"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the ticker of your choice. For example: symbol=IBM"
+      },
+      "interval": {
+        "required": true,
+        "description": "Time interval between two consecutive data points in the time series. The following values are supported: 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly"
+      },
+      "time_period": {
+        "required": true,
+        "description": "Number of data points used to calculate each moving average value. Positive integers are accepted (e.g., time_period=60, time_period=200)"
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the daily time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=ATR&symbol=IBM&interval=weekly&time_period=10&apikey=demo"
+    ]
+  },
+  {
+    "function": "MOM",
+    "description": "This API returns the momentum (MOM) values.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The technical indicator of your choice. In this case, function=MOM"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the ticker of your choice. For example: symbol=IBM"
+      },
+      "interval": {
+        "required": true,
+        "description": "Time interval between two consecutive data points in the time series. The following values are supported: 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly"
+      },
+      "time_period": {
+        "required": true,
+        "description": "Number of data points used to calculate each moving average value. Positive integers are accepted (e.g., time_period=60, time_period=200)"
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the daily time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=MOM&symbol=IBM&interval=weekly&time_period=10&apikey=demo"
+    ]
+  },
+  {
+    "function": "PPO",
+    "description": "This API returns the percentage price oscillator (PPO) values.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The technical indicator of your choice. In this case, function=PPO"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the ticker of your choice. For example: symbol=IBM"
+      },
+      "interval": {
+        "required": true,
+        "description": "Time interval between two consecutive data points in the time series. The following values are supported: 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly"
+      },
+      "fastperiod": {
+        "required": true,
+        "description": "The time period for the fast EMA in the PPO calculation."
+      },
+      "slowperiod": {
+        "required": true,
+        "description": "The time period for the slow EMA in the PPO calculation."
+      },
+      "matype": {
+        "required": true,
+        "description": "The type of moving average used in the PPO calculation. Accepted values are SMA, EMA, WMA, DEMA, TEMA, TRIMA, KAMA, MAMA, and T3."
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the daily time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=PPO&symbol=IBM&interval=weekly&fastperiod=10&slowperiod=20&matype=SMA&apikey=demo"
+    ]
+  },
+  {
+    "function": "ROC",
+    "description": "This API returns the rate of change (ROC) values.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The technical indicator of your choice. In this case, function=ROC"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the ticker of your choice. For example: symbol=IBM"
+      },
+      "interval": {
+        "required": true,
+        "description": "Time interval between two consecutive data points in the time series. The following values are supported: 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly"
+      },
+      "time_period": {
+        "required": true,
+        "description": "Number of data points used to calculate each moving average value. Positive integers are accepted (e.g., time_period=60, time_period=200)"
+      },
+      "series_type": {
+        "required": true,
+        "description": "The desired price type in the time series. Four types are supported: close, open, high, low"
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the daily time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=ROC&symbol=IBM&interval=weekly&time_period=10&series_type=close&apikey=demo"
+    ]
+  },
+  {
+    "function": "AD",
+    "description": "This API returns the chaikin a/d line values.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The technical indicator of your choice. In this case, function=AD"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the ticker of your choice. For example: symbol=IBM"
+      },
+      "interval": {
+        "required": true,
+        "description": "Time interval between two consecutive data points in the time series. The following values are supported: 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly"
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the daily time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=AD&symbol=IBM&interval=weekly&apikey=demo"
+    ]
+  },
+  {
+    "function": "CHAIKIN_VOLATILITY",
+    "description": "This API returns the chaikin volatility values.",
+    "parameters": {
+      "function": {
+        "required": true,
+        "description": "The technical indicator of your choice. In this case, function=CHAIKIN_VOLATILITY"
+      },
+      "symbol": {
+        "required": true,
+        "description": "The name of the ticker of your choice. For example: symbol=IBM"
+      },
+      "interval": {
+        "required": true,
+        "description": "Time interval between two consecutive data points in the time series. The following values are supported: 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly"
+      },
+      "datatype": {
+        "required": false,
+        "description": "By default, datatype=json. Strings json and csv are accepted with the following specifications: json returns the daily time series in JSON format; csv returns the time series as a CSV (comma separated value) file."
+      },
+      "apikey": {
+        "required": true,
+        "description": "Your API key. Claim your free API key here."
+      }
+    },
+    "examples": [
+      "https://www.alphavantage.co/query?function=CHAIKIN_VOLATILITY&symbol=IBM&interval=weekly&apikey=demo"
+    ]
+  }
+]

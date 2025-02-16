@@ -1,18 +1,20 @@
 import click
 import asyncio
 from tools.financial_data import FinancialDataToolSpec
+from tools.alphavantage_retreaver import AlphaVantageToolSpec
 from tools.exchange_rate import ExchangeRateTool
 from utils.base_agent import BaseAgent
 from utils.common import save_context, load_context
 
 # python assistant/stock-broker.py -m "considering the drop in stock price of nvidia this week, do you still recommend buying nvidia shares? explain your analyis, and provide me in the end with a concrete recommendation"
+# python stockbroker.py -s -m llama3.1 "what is the current stock price of NVIDIA?"
 
 class StockBroker(BaseAgent):
     def __init__(self, model_name):
         super().__init__('prompts/trader_prompt.MD', model_name=model_name)
 
     def prepare_chat(self):
-        finances_spec = FinancialDataToolSpec()
+        finances_spec = AlphaVantageToolSpec()
         exchange_rate_spec = ExchangeRateTool()
         tools = []
         tools.extend(finances_spec.to_tool_list())
