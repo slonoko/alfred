@@ -1,8 +1,8 @@
 import click
 import asyncio
-from tools.avtool import AVToolSpec
 from tools.alphavantage_retreaver import AlphaVantageToolSpec
 from tools.exchange_rate import ExchangeRateTool
+from tools.financial_data import FinancialDataToolSpec
 from utils.base_agent import BaseAgent
 from utils.common import save_context, load_context
 
@@ -15,7 +15,7 @@ class StockBroker(BaseAgent):
         super().__init__("prompts/trader_prompt.MD", model_name=model_name)
 
     def prepare_chat(self):
-        finances_spec = AVToolSpec()
+        finances_spec = FinancialDataToolSpec()
         exchange_rate_spec = ExchangeRateTool()
         tools = []
         tools.extend(finances_spec.to_tool_list())
