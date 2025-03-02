@@ -1,7 +1,7 @@
 import logging
 import os
 from llama_index.core import Settings
-from utils.common import (
+from alfred.utils.common import (
     configure_logging,
     apply_nest_asyncio,
     load_environment_variables,

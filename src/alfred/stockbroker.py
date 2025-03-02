@@ -1,10 +1,10 @@
 import click
 import asyncio
-from tools.alphavantage_retreaver import AlphaVantageToolSpec
-from tools.exchange_rate import ExchangeRateTool
-from tools.financial_data import FinancialDataToolSpec
-from utils.base_agent import BaseAgent
-from utils.common import save_context, load_context
+from alfred.tools.alphavantage_retreaver import AlphaVantageToolSpec
+from alfred.tools.exchange_rate import ExchangeRateTool
+from alfred.tools.financial_data import FinancialDataToolSpec
+from alfred.utils.base_agent import BaseAgent
+from alfred.utils.common import save_context, load_context
 
 # python assistant/stock-broker.py -m "considering the drop in stock price of nvidia this week, do you still recommend buying nvidia shares? explain your analyis, and provide me in the end with a concrete recommendation"
 # python stockbroker.py -s -m llama3.1 "what is the current stock price of NVIDIA?"

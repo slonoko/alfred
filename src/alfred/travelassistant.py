@@ -1,10 +1,10 @@
 import pickle
 import click
 import asyncio
-from tools.flight_assistant import FlightAssistantTool
-from tools.exchange_rate import ExchangeRateTool
-from utils.base_agent import BaseAgent
-from utils.common import save_context, load_context
+from alfred.tools.flight_assistant import FlightAssistantTool
+from alfred.tools.exchange_rate import ExchangeRateTool
+from alfred.utils.base_agent import BaseAgent
+from alfred.utils.common import save_context, load_context
 
 from llama_index.core.workflow import (
     Context,

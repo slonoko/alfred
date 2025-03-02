@@ -25,7 +25,9 @@ dependencies = [
     "requests (>=2.32.3,<3.0.0)",
     "tqdm (>=4.67.1,<5.0.0)",
     "guardrails-ai (>=0.6.3,<0.7.0)",
-    "sentence-transformers (>=3.4.1,<4.0.0)"
+    "sentence-transformers (>=3.4.1,<4.0.0)",
+    "click (>=8.1.8,<9.0.0)",
+    "llama-index-llms-ollama (>=0.5.2,<0.6.0)"
 ]
 
 [tool.poetry]

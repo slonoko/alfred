@@ -1,13 +1,13 @@
 import asyncio
 import logging
 import streamlit as st
-from utils.common import (
+from alfred.utils.common import (
     apply_nest_asyncio,
     configure_logging,
     load_environment_variables,
 )
-from stockbroker import run_command as run_stock_command
-from travelassistant import run_command as run_travel_command
+from alfred.stockbroker import run_command as run_stock_command
+from alfred.travelassistant import run_command as run_travel_command
 import requests
 
 configure_logging(level=logging.DEBUG)
