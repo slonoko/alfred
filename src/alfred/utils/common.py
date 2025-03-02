@@ -63,7 +63,7 @@ def initialize_azure_services():
 
 # Initialize Ollama services
 def initialize_ollama_services(model_name):
-    OLLAMA_URL = "http://localhost:11434"
+    OLLAMA_URL = os.getenv("ollama_server")
     MODEL_NAME = "llama3.1" if model_name == 'azure' else model_name # deepseek-r1:8b, llama3.1, olmo2, mistral, dolphin3
     EMBED_MODEL_NAME = "bge-m3"
 

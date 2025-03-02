@@ -23,7 +23,9 @@ dependencies = [
     "streamlit (>=1.42.2,<2.0.0)",
     "nest-asyncio (>=1.6.0,<2.0.0)",
     "requests (>=2.32.3,<3.0.0)",
-    "tqdm (>=4.67.1,<5.0.0)"
+    "tqdm (>=4.67.1,<5.0.0)",
+    "guardrails-ai (>=0.6.3,<0.7.0)",
+    "sentence-transformers (>=3.4.1,<4.0.0)"
 ]
 
 [tool.poetry]
@@ -33,7 +35,3 @@ packages = [{include = "alfred", from = "src"}]
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
-
-
-guardrails-ai
-llama-index-output-parsers-guardrails
