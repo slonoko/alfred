@@ -3,7 +3,7 @@ from llama_index.core.tools.tool_spec.base import BaseToolSpec
 import logging
 from dotenv import load_dotenv
 import os
-from alfred.utils.semantic_search import perform_search
+from alfred.utils.common import perform_search
 
 load_dotenv()
 

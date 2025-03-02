@@ -1,5 +1,5 @@
 import pytest
-from alfred.utils.semantic_search import perform_search
+from alfred.utils.common import perform_search
 
 def test_perform_search_not_none():
     query = "NVDA current stock price?"
