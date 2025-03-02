@@ -8,7 +8,7 @@ import pickle
 def available_functions(): 
     """ Retrieve the list of functions related to stocks along with the description. """ 
     try: 
-        with open("./assistant/tools/functions.json", "r") as file: 
+        with open("./tools/functions.json", "r") as file: 
             logging.debug("functions.json loaded.") 
             functions = json.load(file) 
             return [(fct["function"], fct["description"]) for fct in functions] 
@@ -32,7 +32,7 @@ def perform_search(corpus, query):
         else: 
                 with open("av_functions.pkl", "rb") as fIn: 
                     query_embedding = pickle.load(fIn)
-    hits = util.semantic_search(query_embedding, corpus_embeddings, top_k=10) 
+    hits = util.semantic_search(query_embedding, corpus_embeddings, top_k=3) 
     hits = hits[0] 
     # Get the hits for the first query 
     for hit in hits: 
