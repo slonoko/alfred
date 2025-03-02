@@ -20,8 +20,12 @@ def available_functions():
         return []
 
 def perform_search(query): 
-    client = chromadb.EphemeralClient()
-    collection = client.create_collection("docs")
+    client = chromadb.HttpClient("khoury")
+    try:
+        collection = client.get_collection("docs")
+    except chromadb.errors.InvalidCollectionException as e:
+        logging.error(f"Collection not found: {e}")
+        collection = client.create_collection("docs", get_or_create=True)
 
     ollama_embedding = OllamaEmbedding(
         model_name="bge-m3",
