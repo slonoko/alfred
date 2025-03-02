@@ -5,7 +5,7 @@ Alfred is a personal assistant designed to help with a variety of tasks, from an
 ## Prerequisites
 
 - Python 3.10 or higher
-- `conda` (Anaconda or Miniconda)
+- [Poetry](https://python-poetry.org/)
 - Docker and Docker Compose
 - NVIDIA GPU with CUDA support (recommended)
 - [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html#installing-with-apt) for Docker
@@ -19,28 +19,23 @@ Alfred is a personal assistant designed to help with a variety of tasks, from an
     cd alfred
     ```
 
-2. **Create a conda environment:**
+2. **Initialize a poetry environment:**
 
     ```sh
-    conda create --name alfred python=3.10
-    conda activate alfred
+    cd alfred
+    poetry init
+    poetry install
     ```
 
-3. **Set current directory:**
+3. **Install build dependencies:**
 
     ```sh
-    cd assistant
+    poetry install
     ```
 
-4. **Install build dependencies:**
+4. **Set up environment variables:**
 
-    ```sh
-    pip install -r requirements.txt
-    ```
-
-5. **Set up environment variables:**
-
-    **Create a [`.env`](.env ) file in the [`assistant`](assistant ) directory and add the following variables:**
+    **Create a [`.env`](.env ) file in the [`src/alfred`](Alfred) directory and add the following variables:**
 
     ```env
     azure_api_key=<your_azure_api_key>
@@ -49,9 +44,11 @@ Alfred is a personal assistant designed to help with a variety of tasks, from an
     RAPIDAPI_KEY=<key>
     SKYSCANNER_HOST=<subdomain>.p.rapidapi.com
     INVESTING_HOST=<subdomain>.p.rapidapi.com
+    ALPHA_VANTAGE_KEY=<av_key>
+    ollama_server=<server_url>
     ```
 
-6. **Install Required Docker Services:**
+5. **Install Required Docker Services:**
 
     a. **Install Ollama:**
     ```sh
@@ -62,7 +59,6 @@ Alfred is a personal assistant designed to help with a variety of tasks, from an
       --name ollama \
       ollama/ollama
     ```
-    
     b. **Install Alfred chat app**
 
     ```sh
@@ -74,7 +70,7 @@ Alfred is a personal assistant designed to help with a variety of tasks, from an
       alfred-chat
     ```
 
-7. **Install Optional Docker Services:**
+6. **Install Optional Docker Services:**
     a. **Optional: Install Milvus:**
     ```sh
     # Create Milvus directory
@@ -98,6 +94,11 @@ Alfred is a personal assistant designed to help with a variety of tasks, from an
       --restart always \
       ghcr.io/open-webui/open-webui:cuda
     ```
+    
+    c. **Optional: Install Chroma:**
+    ```sh
+    docker run -d -p 8000:8000 --network host --name chromadb -v ~/.storage/alfred_db/:/chroma/chroma --restart always chromadb/chroma
+    ```
 
 ## Usage
 
@@ -113,7 +114,7 @@ The project provides several commands that can be executed using the CLI:
 - **Console:**
 
     ```sh
-    cd assistant
+    cd src/alfred
     
     # Stock broker
     python stockbroker.py -s -m llama3.1 "what is the current price of nvidia? (in euro)"
