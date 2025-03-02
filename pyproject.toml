@@ -1,0 +1,39 @@
+[project]
+name = "alfred"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Elie Khoury",email = "elie.kh@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.10,<4.0"
+dependencies = [
+    "google-api-python-client (>=2.162.0,<3.0.0)",
+    "google-auth-oauthlib (>=1.2.1,<2.0.0)",
+    "llama-index-embeddings-ollama (>=0.5.0,<0.6.0)",
+    "llama-parse (>=0.6.2,<0.7.0)",
+    "llama-index-readers-google (>=0.6.0,<0.7.0)",
+    "llama-index-tools-wikipedia (>=0.3.0,<0.4.0)",
+    "llama-index-llms-openai (>=0.3.25,<0.4.0)",
+    "llama-index-llms-azure-openai (>=0.3.0,<0.4.0)",
+    "llama-index-embeddings-azure-openai (>=0.3.0,<0.4.0)",
+    "llama-index-vector-stores-milvus (>=0.5.0,<0.6.0)",
+    "llama-index-vector-stores-chroma (>=0.4.1,<0.5.0)",
+    "docker (>=7.1.0,<8.0.0)",
+    "streamlit (>=1.42.2,<2.0.0)",
+    "nest-asyncio (>=1.6.0,<2.0.0)",
+    "requests (>=2.32.3,<3.0.0)",
+    "tqdm (>=4.67.1,<5.0.0)"
+]
+
+[tool.poetry]
+packages = [{include = "alfred", from = "src"}]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+
+guardrails-ai
+llama-index-output-parsers-guardrails
