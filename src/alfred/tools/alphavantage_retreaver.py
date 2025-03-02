@@ -3,6 +3,7 @@ from llama_index.core.tools.tool_spec.base import BaseToolSpec
 import logging
 from dotenv import load_dotenv
 import os
+from alfred.utils.semantic_search import perform_search
 
 load_dotenv()
 
@@ -18,7 +19,7 @@ class AlphaVantageToolSpec(BaseToolSpec):
     """
 
     spec_functions = [
-        "get_available_functions",
+        "get_relevant_functions",
         "execute_function",
         "get_apikey"
     ]
@@ -38,20 +39,12 @@ class AlphaVantageToolSpec(BaseToolSpec):
         logging.debug(f"Retrieving the API_KEY: {self.apikey}")
         return self.apikey
 
-    def get_available_functions(self):
+    def get_relevant_functions(self, query):
         """
-        Retrieve the list of functions related to stocks along with the description, parameters and example calls.
+        Retrieve the relevant function related to query along with the description, parameters and example calls.
         """
-        try:
-            with open("./tools/functions.json", "r") as file:
-                logging.debug("functions.json loaded.")
-                return file.read()
-        except FileNotFoundError:
-            logging.error("functions.json file not found.")
-            return {}
-        except Exception as e:
-            logging.error(f"An error occurred while reading functions.json: {e}")
-            return {}
+        result = perform_search(query)
+        return result
 
     def execute_function(
         self, function: str, parameters: dict = None

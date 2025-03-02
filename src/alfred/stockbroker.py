@@ -15,7 +15,7 @@ class StockBroker(BaseAgent):
         super().__init__("prompts/trader_prompt.MD", model_name=model_name)
 
     def prepare_chat(self):
-        finances_spec = FinancialDataToolSpec()
+        finances_spec = AlphaVantageToolSpec()
         exchange_rate_spec = ExchangeRateTool()
         tools = []
         tools.extend(finances_spec.to_tool_list())

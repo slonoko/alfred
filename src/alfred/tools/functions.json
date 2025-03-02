@@ -904,32 +904,6 @@
     ]
   },
   {
-    "function": "CURRENCY_EXCHANGE_RATE",
-    "description": "This API returns the realtime exchange rate for a pair of digital currency (e.g., Bitcoin) and physical currency (e.g., USD).",
-    "parameters": {
-      "function": {
-        "required": true,
-        "description": "The function of your choice. In this case, function=CURRENCY_EXCHANGE_RATE"
-      },
-      "from_currency": {
-        "required": true,
-        "description": "The currency you would like to get the exchange rate for. It can either be a physical currency or digital/crypto currency. For example: from_currency=USD or from_currency=BTC."
-      },
-      "to_currency": {
-        "required": true,
-        "description": "The destination currency for the exchange rate. It can either be a physical currency or digital/crypto currency. For example: to_currency=USD or to_currency=BTC."
-      },
-      "apikey": {
-        "required": true,
-        "description": "Your API key. Claim your free API key here."
-      }
-    },
-    "examples": [
-      "https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=USD&to_currency=JPY&apikey=demo",
-      "https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=BTC&to_currency=EUR&apikey=demo"
-    ]
-  },
-  {
     "function": "FX_INTRADAY",
     "description": "This API returns intraday time series (timestamp, open, high, low, close) of the FX currency pair specified, updated realtime.",
     "parameters": {

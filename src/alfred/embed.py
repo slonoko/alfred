@@ -1,3 +1,3 @@
-from alfred.utils.semantic_search import available_functions, perform_search
+from alfred.utils.semantic_search import perform_search
 
-perform_search(available_functions(), "stock price of NVIDIA")
+print(perform_search("what is the current stock price of a stock?"))
