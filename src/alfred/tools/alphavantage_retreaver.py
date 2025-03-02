@@ -43,7 +43,9 @@ class AlphaVantageToolSpec(BaseToolSpec):
         """
         Retrieve the relevant function related to query along with the description, parameters and example calls.
         """
+        logging.debug(f"Retrieving relevant functions for query: {query}")
         result = perform_search(query)
+        logging.debug(f"Relevant functions: {result}")
         return result
 
     def execute_function(
@@ -60,7 +62,7 @@ class AlphaVantageToolSpec(BaseToolSpec):
         # Add the apikey and function to the parameters
         parameters = parameters or {}
         parameters.update({"apikey": self.apikey}, {"function":function})
-        logging.debug(f"URL: {base_url}, and Request parameters: {parameters}")
+        logging.debug(f"Executing function with URL: {base_url}, and Request parameters: {parameters}")
         response = requests.get(base_url, params=parameters)
         if response.status_code == 200:
             return response.json()

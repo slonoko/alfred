@@ -27,7 +27,8 @@ dependencies = [
     "guardrails-ai (>=0.6.3,<0.7.0)",
     "sentence-transformers (>=3.4.1,<4.0.0)",
     "click (>=8.1.8,<9.0.0)",
-    "llama-index-llms-ollama (>=0.5.2,<0.6.0)"
+    "llama-index-llms-ollama (>=0.5.2,<0.6.0)",
+    "pytest (>=8.3.4,<9.0.0)"
 ]
 
 [tool.poetry]

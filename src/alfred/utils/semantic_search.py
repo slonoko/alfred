@@ -8,7 +8,7 @@ import chromadb
 def available_functions(): 
     """ Retrieve the list of functions related to stocks along with the description. """ 
     try: 
-        with open("./tools/functions.json", "r") as file: 
+        with open("/home/elie/Projects/alfred/src/alfred/tools/functions.json", "r") as file: 
             logging.debug("functions.json loaded.") 
             functions = json.load(file) 
             return [[fct["function"], fct["description"], fct["parameters"]] for fct in functions] 
