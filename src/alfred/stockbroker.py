@@ -2,7 +2,6 @@ import click
 import asyncio
 from alfred.tools.alphavantage_retreaver import AlphaVantageToolSpec
 from alfred.tools.exchange_rate import ExchangeRateTool
-from alfred.tools.financial_data import FinancialDataToolSpec
 from alfred.utils.base_agent import BaseAgent
 from alfred.utils.common import save_context, load_context
 
@@ -19,7 +18,7 @@ class StockBroker(BaseAgent):
         exchange_rate_spec = ExchangeRateTool()
         tools = []
         tools.extend(finances_spec.to_tool_list())
-        tools.extend(exchange_rate_spec.to_tool_list())
+        #tools.extend(exchange_rate_spec.to_tool_list())
 
         return super().prepare_chat(
             agent_name="broker",
