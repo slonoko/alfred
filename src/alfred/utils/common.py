@@ -106,21 +106,7 @@ def load_context(workflow, pkl_file):
             )
     return ctx
 
-def available_functions(): 
-    """ Retrieve the list of functions related to stocks along with the description. """ 
-    try: 
-        with open("/home/elie/Projects/alfred/src/alfred/tools/functions.json", "r") as file: 
-            logging.debug("functions.json loaded.") 
-            functions = json.load(file) 
-            return [[fct["function"], fct["description"], fct["parameters"]] for fct in functions] 
-    except FileNotFoundError: 
-        logging.error("functions.json file not found.") 
-        return [] 
-    except Exception as e: 
-        logging.error(f"An error occurred while reading functions.json: {e}") 
-        return []
-
-def perform_search(query): 
+def perform_search(embedding_model, available_fcts, query): 
     client = chromadb.HttpClient("khoury")
     try:
         collection = client.get_collection("docs")
@@ -128,14 +114,8 @@ def perform_search(query):
         logging.error(f"Collection not found: {e}")
         collection = client.create_collection("docs", get_or_create=True)
 
-    ollama_embedding = OllamaEmbedding(
-        model_name="bge-m3",
-        base_url="http://khoury:11434",
-        ollama_additional_kwargs={"mirostat": 0},
-    )
-
-    for i, d,p in available_functions():
-        embeddings = ollama_embedding.get_text_embedding(d)
+    for i, d,p in available_fcts:
+        embeddings = embedding_model.get_text_embedding(d)
         collection.add(
             ids=i,
             embeddings=embeddings,
@@ -144,7 +124,7 @@ def perform_search(query):
         )
 
     # generate an embedding for the input and retrieve the most relevant doc
-    query_embeddings = ollama_embedding.get_query_embedding(query)
+    query_embeddings = embedding_model.get_query_embedding(query)
     results = collection.query(
     query_embeddings=[query_embeddings],
     n_results=3

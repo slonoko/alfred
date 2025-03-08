@@ -45,7 +45,9 @@ Alfred is a personal assistant designed to help with a variety of tasks, from an
     SKYSCANNER_HOST=<subdomain>.p.rapidapi.com
     INVESTING_HOST=<subdomain>.p.rapidapi.com
     ALPHA_VANTAGE_KEY=<av_key>
+    ALPHA_VANTAGE_URL=<full url>
     ollama_server=<server_url>
+    fcts_path=<full path of the json file>
     ```
 
 5. **Install Required Docker Services:**
