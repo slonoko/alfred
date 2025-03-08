@@ -8,8 +8,6 @@ load_dotenv()
 
 def setup_module(module):
     ''' Setup for the entire module '''
-    logging.info('Inside Setup')
-    # Do the actual setup stuff here
     pass
 
 def setup_function(func):

@@ -20,7 +20,7 @@ import chromadb
 
 # Logging configuration
 def configure_logging(level=logging.INFO):
-    logging.basicConfig(stream=sys.stdout, level=level)
+    logging.basicConfig(stream=sys.stdout, level=level, format="%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)", datefmt="%Y-%m-%d %H:%M:%S")
 
 
 # Apply nest_asyncio
