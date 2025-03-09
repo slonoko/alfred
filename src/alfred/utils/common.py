@@ -106,7 +106,7 @@ def load_context(workflow, pkl_file):
             )
     return ctx
 
-def perform_search(embedding_model, available_fcts, query): 
+async def perform_search(embedding_model, available_fcts, query):
     client = chromadb.HttpClient("khoury")
     try:
         collection = client.get_collection("docs")
@@ -114,14 +114,14 @@ def perform_search(embedding_model, available_fcts, query):
         logging.error(f"Collection not found: {e}")
         collection = client.create_collection("docs", get_or_create=True)
 
-    for i, d,p in available_fcts:
-        embeddings = embedding_model.get_text_embedding(d)
-        collection.add(
-            ids=i,
-            embeddings=embeddings,
-            documents=d,
-            metadatas={"parameters":json.dumps(p)},
-        )
+        for i, d,p in available_fcts:
+            embeddings = embedding_model.get_text_embedding(d)
+            collection.add(
+                ids=i,
+                embeddings=embeddings,
+                documents=d,
+                metadatas={"parameters":json.dumps(p)},
+            )
 
     # generate an embedding for the input and retrieve the most relevant doc
     query_embeddings = embedding_model.get_query_embedding(query)
@@ -129,9 +129,7 @@ def perform_search(embedding_model, available_fcts, query):
     query_embeddings=[query_embeddings],
     n_results=3
     )
-
     matched_id = results["ids"][0][0]
     documentation = results["documents"][0][0]
     parameters = json.loads(results["metadatas"][0][0]["parameters"])
-    
     return {"function": matched_id, "documentation": documentation, "parameters": parameters}

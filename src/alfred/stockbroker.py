@@ -21,8 +21,6 @@ class StockBroker(BaseAgent):
         tools.extend(exchange_rate_spec.to_tool_list())
 
         return super().prepare_chat(
-            agent_name="broker",
-            agent_description="Stock broker agent",
             tools=tools,
         )
 
@@ -38,7 +36,7 @@ async def run_command(
     if memory:
         ctx = load_context(workflow, CTX_PKL)
 
-    handler = workflow.run(ctx=ctx, user_msg=question)
+    handler = workflow.run(ctx=ctx, query=question)
     response = await handler
 
     if memory:

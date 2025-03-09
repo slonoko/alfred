@@ -55,13 +55,13 @@ class AlphaVantageToolSpec(BaseToolSpec):
             logging.error(f"An error occurred while reading functions.json: {e}") 
             return []
 
-    def get_relevant_functions(self, query):
+    async def get_relevant_functions(self, query):
         """
         Retrieve the relevant function related to query along with the description, parameters and example calls.
         """
         logging.info(f"Retrieving relevant functions for query: {query}")
-        result = perform_search(embedding_model=Settings.embed_model, available_fcts=self.available_functions() , query=query)
-        logging.info(f"Relevant functions: {result}")
+        result = await perform_search(embedding_model=Settings.embed_model, available_fcts=self.available_functions() , query=query)
+        logging.info(f"Relevant functions: {result['function']}")
         return result
 
     def execute_function(
@@ -76,10 +76,11 @@ class AlphaVantageToolSpec(BaseToolSpec):
         base_url = self.api_url
         
         # Add the apikey and function to the parameters
-        parameters = parameters or {}
-        parameters.update({"apikey": self.apikey}, {"function":function})
-        logging.info(f"Executing function with URL: {base_url}, and Request parameters: {parameters}")
-        response = requests.get(base_url, params=parameters)
+        _parameters = parameters or {}
+        _parameters.update({"function":function})
+        _parameters.update({"apikey":self.apikey})
+        logging.info(f"Executing function with URL: {base_url}, and Request parameters: {_parameters}")
+        response = requests.get(base_url, params=_parameters)
         if response.status_code == 200:
             return response.json()
         else:
