@@ -42,12 +42,12 @@ class AlphaVantageUtils():
             logging.error(f"An error occurred while reading functions.json: {e}") 
             return []
 
-    async def get_relevant_functions(self, query):
+    async def get_relevant_functions(self, embed_model , query):
         """
         Retrieve the relevant function related to query along with the description, parameters and example calls.
         """
         logging.info(f"Retrieving relevant functions for query: {query}")
-        result = await search_index(query=query)
+        result = await perform_search(embedding_model=embed_model,query=query)
         logging.info(f"Relevant functions: {result['function']}")
         return result
 

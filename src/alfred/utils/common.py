@@ -18,7 +18,8 @@ import json
 from llama_index.embeddings.ollama import OllamaEmbedding
 import chromadb
 from llama_index.vector_stores.chroma import ChromaVectorStore
-from llama_index.core.schema import Document
+from llama_index.core.schema import Document, MediaResource
+
 # Logging configuration
 def configure_logging(level=logging.INFO):
     logging.basicConfig(stream=sys.stdout, level=level, format="%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)", datefmt="%Y-%m-%d %H:%M:%S")
@@ -118,22 +119,24 @@ async def create_index(embedding_model, available_fcts):
     storage_context = StorageContext.from_defaults(vector_store=vector_store)
     documents = []
     for i, d,p in available_fcts:
-        document = Document(doc_id=i,text=d, extra_info=p)
+        document = Document()
+        document.id_ = i
+        document.metadata = {"parameters":json.dumps(p)}
+        document.text_resource = MediaResource(text=d)
         documents.append(document)
-
     index = VectorStoreIndex.from_documents(documents, storage_context=storage_context, embed_model=embedding_model ,show_progress=True, use_async=True)
     return index
 
-async def search_index(query):
+async def search_index(embedding_model, llm, query):
     client = chromadb.HttpClient("khoury")
     collection = client.get_collection("docs")
     vector_store = ChromaVectorStore(chroma_collection=collection)
-    index = VectorStoreIndex.from_vector_store(vector_store)
-    query_engine = index.as_query_engine(llm=Settings.llm, similarity_top_k=3)
+    index = VectorStoreIndex.from_vector_store(vector_store, embedding_model)
+    query_engine = index.as_query_engine(llm=llm, similarity_top_k=3)
     return query_engine.query(query)
 
 
-async def perform_search(embedding_model, available_fcts, query):
+async def perform_search(embedding_model, available_fcts = None, query = None):
     client = chromadb.HttpClient("khoury")
     try:
         collection = client.get_collection("docs")
@@ -156,7 +159,13 @@ async def perform_search(embedding_model, available_fcts, query):
     query_embeddings=[query_embeddings],
     n_results=3
     )
-    matched_id = results["ids"][0][0]
-    documentation = results["documents"][0][0]
-    parameters = json.loads(results["metadatas"][0][0]["parameters"])
-    return {"function": matched_id, "documentation": documentation, "parameters": parameters}
+
+    output = []
+    for  i in range(len(results["ids"])):   
+        matched_id = results["ids"][i][0]
+        documentation = results["documents"][i][0]
+        parameters = json.loads(results["metadatas"][i][0]["parameters"])
+        output.append({"function": matched_id, "documentation": documentation, "parameters": parameters})
+
+        
+    return output

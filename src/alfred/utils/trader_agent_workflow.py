@@ -84,7 +84,7 @@ class TraderAgentWorkflow(Workflow):
     @step
     async def find_function(self, ctx: Context, event: QueryEvent) -> FunctionEvent:
         logging.info(f'Query: {event.query}')
-        functions =await self.tool.get_relevant_functions(event.query)
+        functions =await self.tool.get_relevant_functions(Settings.embed_model, event.query)
         return FunctionEvent(function=functions['function'], documentation=functions['documentation'], parameters=functions['parameters'])
 
     @step
