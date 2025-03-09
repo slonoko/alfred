@@ -4,32 +4,14 @@ from alfred.tools.alphavantage_retreaver import AlphaVantageToolSpec
 from alfred.tools.exchange_rate import ExchangeRateTool
 from alfred.utils.base_agent import BaseAgent
 from alfred.utils.common import save_context, load_context
-
+from alfred.utils.trader_agent_workflow import TraderAgentWorkflow
 # python assistant/stock-broker.py -m "considering the drop in stock price of nvidia this week, do you still recommend buying nvidia shares? explain your analyis, and provide me in the end with a concrete recommendation"
 # python stockbroker.py -s -m llama3.1 "what is the current stock price of NVIDIA?"
-
-
-class StockBroker(BaseAgent):
-    def __init__(self, model_name):
-        super().__init__("prompts/prompt.sys.MD", model_name=model_name)
-
-    def prepare_chat(self):
-        finances_spec = AlphaVantageToolSpec()
-        exchange_rate_spec = ExchangeRateTool()
-        tools = []
-        tools.extend(finances_spec.to_tool_list())
-        tools.extend(exchange_rate_spec.to_tool_list())
-
-        return super().prepare_chat(
-            tools=tools,
-        )
-
 
 async def run_command(
     question: str = None, memory: bool = False, model_name: str = "llama3.1"
 ):
-    broker = StockBroker(model_name)
-    workflow = broker.prepare_chat()
+    workflow = TraderAgentWorkflow(model_name)
     ctx = None
     CTX_PKL = "ctx_stock_broker.pkl"
 

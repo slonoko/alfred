@@ -10,29 +10,13 @@ from llama_index.core import Settings
 load_dotenv()
 
 
-class AlphaVantageToolSpec(BaseToolSpec):
-    """
-    AlphaVantageToolSpec is a tool specification class for interacting with the Alpha Vantage API. 
-    It provides methods to retrieve available functions and execute them using the API. 
-    The `get_relevant_functions` method returns most relevant functions related to stocks along with their parameters, which can be used as input for the `execute_function` method to query the Alpha Vantage API.
-    Based on the description of the function, select the appropriate parameters and pass them as a dictionary to the `execute_function` method to get the desired data from the API.
-    You do not need to pass the apikey as it is automatically included in the request.
-    Once you the available function, you can use the `execute_function` method to get the data from the API.
-
-    """
-
-    spec_functions = [
-        "get_relevant_functions",
-        "execute_function",
-    ]
+class AlphaVantageUtils():
 
     def __init__(self):
         self.api_url = os.getenv("ALPHA_VANTAGE_URL")
         self.apikey = os.getenv("ALPHA_VANTAGE_KEY")
 
         logging.info("Alpha Vantage tool initialized.")
-        logging.info(f"API URL: {self.api_url}")
-        logging.info(f"API_KEY: {self.apikey}")
 
     def get_apikey(self):
         """

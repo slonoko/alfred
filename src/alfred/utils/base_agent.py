@@ -9,49 +9,9 @@ from alfred.utils.common import (
     initialize_ollama_services,
     read_md_file
 )
-from alfred.tools.alphavantage_retreaver import AlphaVantageToolSpec
-from llama_index.core.workflow import (
-    Event,
-    StartEvent,
-    StopEvent,
-    Workflow,
-    step,
-    Context
-)
-from llama_index.core.tools import FunctionTool
-from llama_index.core.agent import FunctionCallingAgent
-
 from llama_index.core.agent.workflow import (
     AgentWorkflow,
     ReActAgent)
-
-class QueryEvent(Event):
-    query: str
-
-class FunctionEvent(Event):
-    function: str
-    documentation: str
-    parameters: any
-
-class TraderAgentWorkflow(Workflow):
-
-    @step
-    async def start(self, ctx: Context, event: StartEvent) -> QueryEvent:
-        self.tool = AlphaVantageToolSpec()
-        return QueryEvent(query=event.query)
-
-    @step
-    async def find_function(self, ctx: Context, event: QueryEvent) -> FunctionEvent:
-        logging.info(f'Query: {event.query}')
-        functions =await self.tool.get_relevant_functions(event.query)
-        return FunctionEvent(function=functions['function'], documentation=functions['documentation'], parameters=functions['parameters'])
-
-    @step
-    async def execute_function(self, ctx: Context, event: FunctionEvent) -> StopEvent:
-        res = self.tool.execute_function(event.function, event.parameters)
-        print(res)
-        return StopEvent(res)
-        
         
 class BaseAgent:
     def __init__(self, prompt_file, model_name="llama3.1"):
@@ -74,9 +34,12 @@ class BaseAgent:
         self.prompt = read_md_file(os.path.join(os.getcwd(), prompt_file))
 
     def prepare_chat(self, tools):
-        agent = FunctionCallingAgent.from_tools(
+        agent = ReActAgent(
+            name="TraderAgent",
+            description="Trader Agent",
+            system_prompt=self.prompt,
             tools=tools,
             llm=Settings.llm,
         )
 
-        return TraderAgentWorkflow()
+        return AgentWorkflow(agents=[agent])

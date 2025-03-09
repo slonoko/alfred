@@ -11,7 +11,7 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "justMyCode": false,
-            "args": ["\"what is the current stock price of NVIDIA?\""]
+            "args": ["-m","llama3.1", "\"should i buy the current nvidia dip?\""]
         }
     ]
 }
