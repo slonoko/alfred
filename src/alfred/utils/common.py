@@ -7,7 +7,7 @@ from llama_index.llms.ollama import Ollama
 from llama_index.embeddings.ollama import OllamaEmbedding
 from llama_index.llms.azure_openai import AzureOpenAI
 from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
-from llama_index.core import Settings
+from llama_index.core import Settings,VectorStoreIndex,StorageContext
 from llama_index.core.workflow import (
     Context,
     JsonSerializer,
@@ -17,7 +17,8 @@ import pickle
 import json 
 from llama_index.embeddings.ollama import OllamaEmbedding
 import chromadb
-
+from llama_index.vector_stores.chroma import ChromaVectorStore
+from llama_index.core.schema import Document
 # Logging configuration
 def configure_logging(level=logging.INFO):
     logging.basicConfig(stream=sys.stdout, level=level, format="%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)", datefmt="%Y-%m-%d %H:%M:%S")
@@ -105,6 +106,32 @@ def load_context(workflow, pkl_file):
                 workflow, data=ctx_dict, serializer=JsonSerializer()
             )
     return ctx
+
+async def create_index(embedding_model, available_fcts):
+    client = chromadb.HttpClient("khoury")
+    try:
+        alfred_collection = client.delete_collection("docs")
+    except ValueError:
+        pass
+    alfred_collection = client.create_collection("docs")
+    vector_store = ChromaVectorStore(chroma_collection=alfred_collection)
+    storage_context = StorageContext.from_defaults(vector_store=vector_store)
+    documents = []
+    for i, d,p in available_fcts:
+        document = Document(doc_id=i,text=d, extra_info=p)
+        documents.append(document)
+
+    index = VectorStoreIndex.from_documents(documents, storage_context=storage_context, embed_model=embedding_model ,show_progress=True, use_async=True)
+    return index
+
+async def search_index(query):
+    client = chromadb.HttpClient("khoury")
+    collection = client.get_collection("docs")
+    vector_store = ChromaVectorStore(chroma_collection=collection)
+    index = VectorStoreIndex.from_vector_store(vector_store)
+    query_engine = index.as_query_engine(llm=Settings.llm, similarity_top_k=3)
+    return query_engine.query(query)
+
 
 async def perform_search(embedding_model, available_fcts, query):
     client = chromadb.HttpClient("khoury")

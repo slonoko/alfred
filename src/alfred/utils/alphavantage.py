@@ -3,7 +3,7 @@ from llama_index.core.tools.tool_spec.base import BaseToolSpec
 import logging
 from dotenv import load_dotenv
 import os
-from alfred.utils.common import perform_search
+from alfred.utils.common import perform_search, create_index, search_index
 import json
 from llama_index.core import Settings
 
@@ -31,10 +31,10 @@ class AlphaVantageUtils():
             with open(os.getenv("fcts_path"), "r") as file: 
                 logging.info("functions.json loaded.") 
                 functions = json.load(file) 
-                if not title_only:
-                    return [[fct["function"], fct["description"], fct["parameters"]] for fct in functions]
-                else:
+                if title_only:
                     return [[fct["function"], fct["description"]] for fct in functions]
+                else:
+                    return [[fct["function"], fct["description"], fct["parameters"]] for fct in functions]
         except FileNotFoundError: 
             logging.error("functions.json file not found.") 
             return [] 
@@ -47,7 +47,7 @@ class AlphaVantageUtils():
         Retrieve the relevant function related to query along with the description, parameters and example calls.
         """
         logging.info(f"Retrieving relevant functions for query: {query}")
-        result = await perform_search(embedding_model=Settings.embed_model, available_fcts=self.available_functions() , query=query)
+        result = await search_index(query=query)
         logging.info(f"Relevant functions: {result['function']}")
         return result
 
