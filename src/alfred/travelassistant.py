@@ -16,7 +16,7 @@ import os
 
 class TravelAssistant(BaseAgent):
     def __init__(self, model_name):
-        super().__init__('prompts/flightassistant_prompt.MD', model_name)
+        super().__init__('/home/elie/Projects/alfred/src/alfred/prompts/prompt.sys.MD', model_name)
 
     def prepare_chat(self):
         flight_tool = FlightAssistantTool()

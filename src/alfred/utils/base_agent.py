@@ -33,13 +33,13 @@ class BaseAgent:
 
         self.prompt = read_md_file(os.path.join(os.getcwd(), prompt_file))
 
-    def prepare_chat(self, tools):
+    def prepare_chat(self, agent_name, agent_description, tools):
         agent = ReActAgent(
-            name="TraderAgent",
-            description="Trader Agent",
+            name=agent_name,
+            description=agent_description,
             system_prompt=self.prompt,
             tools=tools,
             llm=Settings.llm,
         )
 
-        return AgentWorkflow(agents=[agent])
+        return AgentWorkflow(agents=[agent], root_agent=agent_name)
